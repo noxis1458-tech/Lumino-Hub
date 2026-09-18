@@ -1,5 +1,5 @@
 -- =========================================================================
--- ЧАСТЬ 1: ПОДКЛЮЧЕНИЕ СЕРВИСОВ И БАЗОВАЯ НАСТРОЙКА GUI
+-- ЧАСТЬ 1: СЕРВИСЫ, ОСНОВА И ВЕРХНЯЯ ПЛАШКА (WATERMARK)
 -- =========================================================================
 local TweenService = game:GetService("TweenService")
 local CoreGui = game:GetService("CoreGui")
@@ -14,7 +14,6 @@ local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 local Hub = {}
 Hub.Pages = {}
 Hub.TabButtons = {}
-Hub.Toggles = {}
 
 Hub.ScreenGui = Instance.new("ScreenGui")
 Hub.ScreenGui.Name = "LuminoHubKeySystem"
@@ -36,9 +35,7 @@ Hub.MainFrame.Parent = Hub.ScreenGui
 local MainCorner = Instance.new("UICorner")
 MainCorner.CornerRadius = UDim.new(0, 12)
 MainCorner.Parent = Hub.MainFrame
--- =========================================================================
--- ЧАСТЬ 2: СОЗДАНИЕ ВЕРХНЕЙ ПЛАШКИ WATERMARK
--- =========================================================================
+
 Hub.Watermark = Instance.new("Frame")
 Hub.Watermark.Name = "Watermark"
 Hub.Watermark.Size = UDim2.new(0, 480, 0, 32)
@@ -141,7 +138,7 @@ Hub.WMPing.BackgroundTransparency = 1
 Hub.WMPing.Size = UDim2.new(0, 50, 1, 0)
 Hub.WMPing.Parent = Hub.Watermark
 -- =========================================================================
--- ЧАСТЬ 3: ТЕКСТЫ, КНОПКИ И ПОЛЯ ОКНА АВТОРЗАЦИИ (ЖЕСТКИЙ ФИКС)
+-- ЧАСТЬ 2: ТЕКСТЫ И КНОПКИ ОКНА АВТОРЗАЦИИ
 -- =========================================================================
 local Title = Instance.new("TextLabel")
 Title.Name = "Title"
@@ -250,12 +247,126 @@ Hub.GetKeyBtn.BackgroundColor3 = Color3.fromRGB(44, 44, 50)
 Hub.GetKeyBtn.BorderSizePixel = 0
 Hub.GetKeyBtn.Position = UDim2.new(0.5, 5, 0, 210)
 Hub.GetKeyBtn.Size = UDim2.new(0.5, -20, 0, 45)
-Hub.GetKeyBtn.Parent = Hub.MainFrame -- ТУТ ИСПРАВЛЕНО (было Hub.GetKeyBtn)
+Hub.GetKeyBtn.Parent = Hub.MainFrame
 local GetKeyCorner = Instance.new("UICorner")
 GetKeyCorner.CornerRadius = UDim.new(0, 8)
 GetKeyCorner.Parent = Hub.GetKeyBtn
 -- =========================================================================
--- ЧАСТЬ 4: ГЕНЕРАЦИЯ ОСНОВНОГО МЕНЮ, РАЗДЕЛОВ И СТРАНИЦ ХАБА
+-- ЧАСТЬ 3: ТЕКСТЫ, КНОПКИ И ПОЛЯ ОКНА АВТОРЗАЦИИ
+-- =========================================================================
+local Title = Instance.new("TextLabel")
+Title.Name = "Title"
+Title.Text = "Lumino Hub"
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 22
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextXAlignment = Enum.TextXAlignment.Left
+Title.BackgroundTransparency = 1
+Title.Position = UDim2.new(0, 45, 0, 15)
+Title.Size = UDim2.new(0.6, 0, 0, 30)
+Title.Parent = Hub.MainFrame
+
+local Icon = Instance.new("TextLabel")
+Icon.Name = "Icon"
+Icon.Text = "⚡"
+Icon.Font = Enum.Font.GothamBold
+Icon.TextSize = 18
+Icon.TextColor3 = Color3.fromRGB(255, 255, 255)
+Icon.BackgroundTransparency = 1
+Icon.Position = UDim2.new(0, 15, 0, 15)
+Icon.Size = UDim2.new(0, 22, 0, 30)
+Icon.Parent = Hub.MainFrame
+
+Hub.CloseButton = Instance.new("TextButton")
+Hub.CloseButton.Name = "CloseButton"
+Hub.CloseButton.Text = "✕"
+Hub.CloseButton.Font = Enum.Font.GothamBold
+Hub.CloseButton.TextSize = 16
+Hub.CloseButton.TextColor3 = Color3.fromRGB(150, 150, 150)
+Hub.CloseButton.BackgroundTransparency = 1
+Hub.CloseButton.BorderSizePixel = 0
+Hub.CloseButton.Position = UDim2.new(1, -35, 0, 15)
+Hub.CloseButton.Size = UDim2.new(0, 20, 0, 30)
+Hub.CloseButton.Parent = Hub.MainFrame
+
+local InfoText = Instance.new("TextLabel")
+InfoText.Name = "InfoText"
+InfoText.Text = "Having trouble getting a key or checking your key?\nJoin my Telegram server for assistance"
+InfoText.Font = Enum.Font.Gotham
+InfoText.TextSize = 12
+InfoText.TextColor3 = Color3.fromRGB(161, 161, 170)
+InfoText.TextWrapped = true
+InfoText.TextXAlignment = Enum.TextXAlignment.Left
+InfoText.TextYAlignment = Enum.TextYAlignment.Top
+InfoText.BackgroundTransparency = 1
+InfoText.Position = UDim2.new(0, 15, 0, 55)
+InfoText.Size = UDim2.new(1, -30, 0, 35)
+InfoText.Parent = Hub.MainFrame
+
+Hub.KeyInput = Instance.new("TextBox")
+Hub.KeyInput.Name = "KeyInput"
+Hub.KeyInput.PlaceholderText = "Enter your key here..."
+Hub.KeyInput.Text = ""
+Hub.KeyInput.Font = Enum.Font.Gotham
+Hub.KeyInput.TextSize = 14
+Hub.KeyInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+Hub.KeyInput.PlaceholderColor3 = Color3.fromRGB(82, 82, 91)
+Hub.KeyInput.BackgroundColor3 = Color3.fromRGB(34, 34, 38)
+Hub.KeyInput.BorderSizePixel = 0
+Hub.KeyInput.Position = UDim2.new(0, 15, 0, 100)
+Hub.KeyInput.Size = UDim2.new(1, -30, 0, 45)
+Hub.KeyInput.Parent = Hub.MainFrame
+
+local KeyInputCorner = Instance.new("UICorner")
+KeyInputCorner.CornerRadius = UDim.new(0, 8)
+KeyInputCorner.Parent = Hub.KeyInput
+
+Hub.CheckBtn = Instance.new("TextButton")
+Hub.CheckBtn.Name = "CheckBtn"
+Hub.CheckBtn.Text = "Check Key"
+Hub.CheckBtn.Font = Enum.Font.GothamBold
+Hub.CheckBtn.TextSize = 14
+Hub.CheckBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+Hub.CheckBtn.BackgroundColor3 = Color3.fromRGB(54, 32, 94)
+Hub.CheckBtn.BorderSizePixel = 0
+Hub.CheckBtn.Position = UDim2.new(0, 15, 0, 155)
+Hub.CheckBtn.Size = UDim2.new(1, -30, 0, 45)
+Hub.CheckBtn.Parent = Hub.MainFrame
+local CheckCorner = Instance.new("UICorner")
+CheckCorner.CornerRadius = UDim.new(0, 8)
+CheckCorner.Parent = Hub.CheckBtn
+
+Hub.SupportBtn = Instance.new("TextButton")
+Hub.SupportBtn.Name = "SupportBtn"
+Hub.SupportBtn.Text = "Support"
+Hub.SupportBtn.Font = Enum.Font.GothamBold
+Hub.SupportBtn.TextSize = 14
+Hub.SupportBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+Hub.SupportBtn.BackgroundColor3 = Color3.fromRGB(44, 44, 50)
+Hub.SupportBtn.BorderSizePixel = 0
+Hub.SupportBtn.Position = UDim2.new(0, 15, 0, 210)
+Hub.SupportBtn.Size = UDim2.new(0.5, -20, 0, 45)
+Hub.SupportBtn.Parent = Hub.MainFrame
+local SupportCorner = Instance.new("UICorner")
+SupportCorner.CornerRadius = UDim.new(0, 8)
+SupportCorner.Parent = Hub.SupportBtn
+
+Hub.GetKeyBtn = Instance.new("TextButton")
+Hub.GetKeyBtn.Name = "GetKeyBtn"
+Hub.GetKeyBtn.Text = "Get Key"
+Hub.GetKeyBtn.Font = Enum.Font.GothamBold
+Hub.GetKeyBtn.TextSize = 14
+Hub.GetKeyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+Hub.GetKeyBtn.BackgroundColor3 = Color3.fromRGB(44, 44, 50)
+Hub.GetKeyBtn.BorderSizePixel = 0
+Hub.GetKeyBtn.Position = UDim2.new(0.5, 5, 0, 210)
+Hub.GetKeyBtn.Size = UDim2.new(0.5, -20, 0, 45)
+Hub.GetKeyBtn.Parent = Hub.MainFrame
+local GetKeyCorner = Instance.new("UICorner")
+GetKeyCorner.CornerRadius = UDim.new(0, 8)
+GetKeyCorner.Parent = Hub.GetKeyBtn
+-- =========================================================================
+-- ЧАСТЬ 4: ГЕНЕРАЦИЯ ОСНОВНОГО МЕНЮ, РАЗДЕЛОВ И САЙДБАРА
 -- =========================================================================
 Hub.MainMenuFrame = Instance.new("Frame")
 Hub.MainMenuFrame.Name = "MainMenuFrame"
@@ -541,159 +652,3 @@ Hub.createToggle(Hub.Pages.AutoStealPage, "Включить автоматиче
 Hub.createToggle(Hub.Pages.Visuals, "Включить Скелеты / Box ESP", 1, function(state) print("ESP подсветка:", state) end)
 Hub.createToggle(Hub.Pages.RiftPage, "Автоматическое закрытие разломов", 1, function(state) print("Авто-разломы:", state) end)
 Hub.createToggle(Hub.Pages.BossPage, "Автоматический фарм боссов", 1, function(state) print("Авто-босс:", state) end)
--- =========================================================================
--- ЧАСТЬ 7: ОБРАБОТКА ПОТОКОВ, СВОРЯЧИВАНИЕ ОКНА, КЛИКИ И НЕУБИВАЕМЫЙ DRAG
--- =========================================================================
-task.spawn(function()
-    local frameCount = 0 local lastUpdate = os.clock()
-    RunService.RenderStepped:Connect(function()
-        frameCount = frameCount + 1 local now = os.clock()
-        if now - lastUpdate >= 1 then
-            Hub.WMFps.Text = tostring(math.floor(frameCount / (now - lastUpdate))) .. " fps"
-            local ping = math.floor(Stats.Network.ServerTickRate:GetValue() or 0)
-            if ping == 0 then ping = math.floor(Stats.PerformanceStats.Ping:GetValue() or 25) end
-            Hub.WMPing.Text = tostring(ping) .. " ms "
-            frameCount = 0 lastUpdate = now
-        end
-    end)
-end)
-
-local function createNotification(text, width)
-    local frameWidth = width or 240
-    local NotifFrame = Instance.new("Frame")
-    NotifFrame.BackgroundColor3 = Color3.fromRGB(34, 34, 38)
-    NotifFrame.BorderSizePixel = 0
-    NotifFrame.Position = UDim2.new(1, 50, 0.85, 0)
-    NotifFrame.Size = UDim2.new(0, frameWidth, 0, 50)
-    NotifFrame.Parent = Hub.ScreenGui
-    local NotifCorner = Instance.new("UICorner")
-    NotifCorner.CornerRadius = UDim.new(0, 8)
-    NotifCorner.Parent = NotifFrame
-    local LeftBar = Instance.new("Frame")
-    LeftBar.BackgroundColor3 = Color3.fromRGB(110, 68, 255)
-    LeftBar.BorderSizePixel = 0
-    LeftBar.Size = UDim2.new(0, 5, 1, 0)
-    LeftBar.Parent = NotifFrame
-    local BarCorner = Instance.new("UICorner")
-    BarCorner.CornerRadius = UDim.new(0, 8)
-    BarCorner.Parent = LeftBar
-    local NotifText = Instance.new("TextLabel")
-    NotifText.BackgroundTransparency = 1
-    NotifText.Position = UDim2.new(0, 15, 0, 0)
-    NotifText.Size = UDim2.new(1, -20, 1, 0)
-    NotifText.Font = Enum.Font.GothamMedium
-    NotifText.Text = text
-    NotifText.TextColor3 = Color3.fromRGB(240, 240, 240)
-    NotifText.TextSize = 12
-    NotifText.TextWrapped = true
-    NotifText.TextXAlignment = Enum.TextXAlignment.Left
-    NotifText.Parent = NotifFrame
-    TweenService:Create(NotifFrame, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Position = UDim2.new(1, -(frameWidth + 20), 0.85, 0)}):Play()
-    task.delay(3.5, function()
-        local slideOut = TweenService:Create(NotifFrame, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Position = UDim2.new(1, 50, 0.85, 0)})
-        slideOut:Play() slideOut.Completed:Connect(function() NotifFrame:Destroy() end)
-    end)
-end
-
-local function copyTelegram()
-    local telegramTag = "the_silent52"
-    if setclipboard then setclipboard(telegramTag) elseif toclipboard then toclipboard(telegramTag) end
-end
-
-Hub.SupportBtn.MouseButton1Click:Connect(function() copyTelegram() createNotification("📋 Telegram скопирован!", 240) end)
-Hub.GetKeyBtn.MouseButton1Click:Connect(function() copyTelegram() createNotification("📱 Вы скопировали мой юзер, напишите мне", 310) end)
-
-local toggleKey = Enum.KeyCode.LeftControl
-local isBinding = false local menuVisible = true local isMenuTweening = false
-local finalMenuSize = UDim2.new(0, 500, 0, 320)
-
-local function switchTab(tabName)
-    for pageName, pageFrame in pairs(Hub.Pages) do pageFrame.Visible = false end
-    for btnName, btnEl in pairs(Hub.TabButtons) do
-        TweenService:Create(btnEl, TweenInfo.new(0.2), {BackgroundTransparency = 1, TextColor3 = Color3.fromRGB(160, 160, 165)}):Play()
-    end
-    if Hub.Pages[tabName] then Hub.Pages[tabName].Visible = true end
-    if Hub.TabButtons[tabName] then
-        TweenService:Create(Hub.TabButtons[tabName], TweenInfo.new(0.2), {BackgroundTransparency = 0, BackgroundColor3 = Color3.fromRGB(54, 32, 94), TextColor3 = Color3.fromRGB(255, 255, 255)}):Play()
-    end
-end
-
-Hub.TabButtons.Home.MouseButton1Click:Connect(function() switchTab("Home") end)
-Hub.TabButtons.RiftPage.MouseButton1Click:Connect(function() switchTab("RiftPage") end)
-Hub.TabButtons.BossPage.MouseButton1Click:Connect(function() switchTab("BossPage") end)
-Hub.TabButtons.IndexPage.MouseButton1Click:Connect(function() switchTab("IndexPage") end)
-Hub.TabButtons.PlotPage.MouseButton1Click:Connect(function() switchTab("PlotPage") end)
-Hub.TabButtons.AutoStealPage.MouseButton1Click:Connect(function() switchTab("AutoStealPage") end)
-Hub.TabButtons.Settings.MouseButton1Click:Connect(function() switchTab("Settings") end)
-Hub.TabButtons.Visuals.MouseButton1Click:Connect(function() switchTab("Visuals") end)
-Hub.TabButtons.Server.MouseButton1Click:Connect(function() switchTab("Server") end)
-Hub.TabButtons.Account.MouseButton1Click:Connect(function() switchTab("Account") end)
-
-local function toggleMenu()
-    if isMenuTweening then return end isMenuTweening = true
-    if menuVisible then
-        local closeTween = TweenService:Create(Hub.MainMenuFrame, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Size = UDim2.new(0, 0, 0, 0), BackgroundTransparency = 1})
-        closeTween:Play() closeTween.Completed:Connect(function() Hub.MainMenuFrame.Visible = false menuVisible = false isMenuTweening = false end)
-    else
-        Hub.MainMenuFrame.Visible = true
-        local openTween = TweenService:Create(Hub.MainMenuFrame, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = finalMenuSize, BackgroundTransparency = 0})
-        openTween:Play() openTween.Completed:Connect(function() menuVisible = true isMenuTweening = false end)
-    end
-end
-
-Hub.MenuMinimizeButton.MouseButton1Click:Connect(toggleMenu)
-Hub.BindBtn.MouseButton1Click:Connect(function() if not isBinding then isBinding = true Hub.BindBtn.Text = "Нажмите любую клавишу..." Hub.BindBtn.BackgroundColor3 = Color3.fromRGB(54, 32, 94) end end)
-
-UserInputService.InputBegan:Connect(function(input, gameProcessed)
-    if isBinding and input.UserInputType == Enum.UserInputType.Keyboard then
-        toggleKey = input.KeyCode Hub.BindBtn.Text = "Клавиша скрытия: " .. tostring(toggleKey.Name) Hub.BindBtn.BackgroundColor3 = Color3.fromRGB(39, 39, 42) isBinding = false
-    elseif not gameProcessed and input.KeyCode == toggleKey then
-        if Hub.MainMenuFrame.Size.X.Offset > 0 or menuVisible == false then toggleMenu() end
-    end
-end)
-
-local function openMainMenu()
-    Hub.MainMenuFrame.Visible = true TweenService:Create(Hub.MainMenuFrame, TweenInfo.new(0.6, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = finalMenuSize}):Play() switchTab("Home")
-    local mDragging, mDragInput, mDragStart, mStartPos
-    local function mUpdate(input)
-        local delta = input.Position - mDragStart
-        TweenService:Create(Hub.MainMenuFrame, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Position = UDim2.new(mStartPos.X.Scale, mStartPos.X.Offset + delta.X, mStartPos.Y.Scale, mStartPos.Y.Offset + delta.Y)}):Play()
-    end
-    Hub.MainMenuFrame.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            mDragging = true mDragStart = input.Position mStartPos = Hub.MainMenuFrame.Position
-            local connection connection = input.Changed:Connect(function() if input.UserInputState == Enum.UserInputState.End then mDragging = false connection:Disconnect() end end)
-        end
-    end)
-    Hub.MainMenuFrame.InputChanged:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then mDragInput = input end end)
-    UserInputService.InputChanged:Connect(function(input) if input == mDragInput and mDragging then mUpdate(input) end end)
-end
-
-local isChecking = false
-Hub.CheckBtn.MouseButton1Click:Connect(function()
-    if isChecking then return end local enteredKey = Hub.KeyInput.Text
-    if enteredKey == "" or enteredKey:match("^%s*$") then
-        isChecking = true Hub.CheckBtn.Text = "напиши хоть что-то" Hub.CheckBtn.BackgroundColor3 = Color3.fromRGB(239, 68, 68) task.wait(1.5)
-        Hub.CheckBtn.Text = "Check Key" Hub.CheckBtn.BackgroundColor3 = Color3.fromRGB(54, 32, 94) isChecking = false
-    elseif enteredKey == "Lumin" then
-        isChecking = true Hub.CheckBtn.Text = "спасибо что с нами" Hub.CheckBtn.TextColor3 = Color3.fromRGB(34, 197, 94) Hub.CheckBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 23) task.wait(1.2)
-        local closeTween = TweenService:Create(Hub.MainFrame, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Size = UDim2.new(0, 0, 0, 0), BackgroundTransparency = 1})
-        closeTween:Play() closeTween.Completed:Connect(function()
-            Hub.MainFrame:Destroy() Hub.Watermark.Visible = true Hub.Watermark.BackgroundTransparency = 1
-            TweenService:Create(Hub.Watermark, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundTransparency = 0}):Play()
-            openMainMenu()
-        end)
-    else
-        isChecking = true Hub.CheckBtn.Text = "вы ввели не тот ключ" Hub.CheckBtn.BackgroundColor3 = Color3.fromRGB(239, 68, 68) task.wait(1.5)
-        Hub.CheckBtn.Text = "Check Key" Hub.CheckBtn.BackgroundColor3 = Color3.fromRGB(54, 32, 94) isChecking = false
-    end
-end)
-
-local dragging, dragInput, dragStart, startPos
-local function update(input)
-    local delta = input.Position - dragStart
-    TweenService:Create(Hub.MainFrame, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)}):Play()
-end
-Hub.MainFrame.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        dragging = true dragStart = input.Position startPos = Hub.MainFrame.Position
