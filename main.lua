@@ -141,7 +141,7 @@ Hub.WMPing.BackgroundTransparency = 1
 Hub.WMPing.Size = UDim2.new(0, 50, 1, 0)
 Hub.WMPing.Parent = Hub.Watermark
 -- =========================================================================
--- ЧАСТЬ 3: ТЕКСТЫ, КНОПКИ И ПОЛЯ ОКНА АВТОРЗАЦИИ КЛЮЧА
+-- ЧАСТЬ 3: ТЕКСТЫ, КНОПКИ И ПОЛЯ ОКНА АВТОРЗАЦИИ (ИСПРАВЛЕНО)
 -- =========================================================================
 local Title = Instance.new("TextLabel")
 Title.Name = "Title"
@@ -255,7 +255,7 @@ local GetKeyCorner = Instance.new("UICorner")
 GetKeyCorner.CornerRadius = UDim.new(0, 8)
 GetKeyCorner.Parent = Hub.GetKeyBtn
 -- =========================================================================
--- ЧАСТЬ 4: ГЕНЕРАЦИЯ ОСНОВНОГО МЕНЮ И СТРУКТУРЫ САЙДБАРА
+-- ЧАСТЬ 4: ГЕНЕРАЦИЯ ОСНОВНОГО МЕНЮ, РАЗДЕЛОВ И СТРАНИЦ ХАБА
 -- =========================================================================
 Hub.MainMenuFrame = Instance.new("Frame")
 Hub.MainMenuFrame.Name = "MainMenuFrame"
@@ -344,7 +344,7 @@ ContentContainer.Size = UDim2.new(1, -170, 1, -65)
 ContentContainer.BackgroundTransparency = 1
 ContentContainer.Parent = Hub.MainMenuFrame
 -- =========================================================================
--- ЧАСТЬ 5: НАПОЛНЕНИЕ СТРАНИЦ И СОРТИРОВКА ВКЛАДОК ПО КАТЕГОРИЯМ
+-- ЧАСТЬ 5: НАПОЛНЕНИЕ СТРАНИЦ И СОЗДАНИЕ КНОПОК САЙДБАРА
 -- =========================================================================
 local function createPage(name)
     local Frame = Instance.new("Frame")
@@ -476,7 +476,7 @@ createTabButton("Сервер", 14, "Server")
 createCategoryHeader("Аккаунт", 15)
 createTabButton("Account", 16)
 -- =========================================================================
--- ЧАСТЬ 6: СИСТЕМА КОНСТРУКТОРА ТУМБЛЕРОВ TOGGLE
+-- ЧАСТЬ 6: КОНСТРУКТОР ПЕРЕКЛЮЧАТЕЛЕЙ (TOGGLE SYSTEM)
 -- =========================================================================
 function Hub.createToggle(pageFrame, text, layoutOrder, callback)
     local callbackFunc = callback or function() end
@@ -537,12 +537,12 @@ function Hub.createToggle(pageFrame, text, layoutOrder, callback)
     end)
 end
 
-Hub.createToggle(Hub.Pages.AutoStealPage, "Включить автоматический сбор ресурсов", 1, function(state) print("Авто-кража предметов:", state) end)
-Hub.createToggle(Hub.Pages.Visuals, "Включить Скелеты / Box ESP", 1, function(state) print("ESP подсветка игроков:", state) end)
+Hub.createToggle(Hub.Pages.AutoStealPage, "Включить автоматический сбор ресурсов", 1, function(state) print("Авто-кража:", state) end)
+Hub.createToggle(Hub.Pages.Visuals, "Включить Скелеты / Box ESP", 1, function(state) print("ESP подсветка:", state) end)
 Hub.createToggle(Hub.Pages.RiftPage, "Автоматическое закрытие разломов", 1, function(state) print("Авто-разломы:", state) end)
 Hub.createToggle(Hub.Pages.BossPage, "Автоматический фарм боссов", 1, function(state) print("Авто-босс:", state) end)
 -- =========================================================================
--- ЧАСТЬ 7: СВОРЯЧИВАНИЕ ОКНА, КЛИКИ, ДВИЖОК ДРАГА И ПОЛНОЕ ЗАКРЫТИЕ ФАЙЛА
+-- ЧАСТЬ 7: ОБРАБОТКА ПОТОКОВ, СВОРЯЧИВАНИЕ ОКНА, КЛИКИ И НЕУБИВАЕМЫЙ DRAG
 -- =========================================================================
 task.spawn(function()
     local frameCount = 0 local lastUpdate = os.clock()
@@ -692,7 +692,7 @@ end)
 local dragging, dragInput, dragStart, startPos
 local function update(input)
     local delta = input.Position - dragStart
-    TweenService:Create(Hub.MainFrame, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)}):Play()
+    TweenService:Create(Hub.MainFrame, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)}):Play()
 end
 Hub.MainFrame.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
