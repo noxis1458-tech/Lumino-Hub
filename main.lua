@@ -1,5 +1,5 @@
 -- =========================================================================
--- ЧАСТЬ 1: ПОДКЛЮЧЕНИЕ СЕРВИСОВ И ВЕРХНЯЯ ПЛАШКА WATERMARK
+-- ЧАСТЬ 1: ПОДКЛЮЧЕНИЕ СЕРВИСОВ И БАЗОВАЯ НАСТРОЙКА GUI
 -- =========================================================================
 local TweenService = game:GetService("TweenService")
 local CoreGui = game:GetService("CoreGui")
@@ -11,8 +11,13 @@ local Stats = game:GetService("Stats")
 local LocalPlayer = Players.LocalPlayer or Players.PlayerAdded:Wait()
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 
+-- Общий массив для связи данных между частями
 local Hub = {}
+Hub.Pages = {}
+Hub.TabButtons = {}
+Hub.Toggles = {}
 
+-- Создание защищенного ScreenGui
 Hub.ScreenGui = Instance.new("ScreenGui")
 Hub.ScreenGui.Name = "LuminoHubKeySystem"
 Hub.ScreenGui.ResetOnSpawn = false
@@ -20,6 +25,7 @@ pcall(function()
     Hub.ScreenGui.Parent = (syn and syn.protect_gui and syn.protect_gui(Hub.ScreenGui)) or CoreGui or PlayerGui
 end)
 
+-- Главное окно авторизации (MainFrame)
 Hub.MainFrame = Instance.new("Frame")
 Hub.MainFrame.Name = "MainFrame"
 Hub.MainFrame.BackgroundColor3 = Color3.fromRGB(24, 24, 27)
@@ -33,13 +39,15 @@ Hub.MainFrame.Parent = Hub.ScreenGui
 local MainCorner = Instance.new("UICorner")
 MainCorner.CornerRadius = UDim.new(0, 12)
 MainCorner.Parent = Hub.MainFrame
-
+-- =========================================================================
+-- ЧАСТЬ 2: СОЗДАНИЕ ВЕРХНЕЙ ПЛАШКИ WATERMARK
+-- =========================================================================
 Hub.Watermark = Instance.new("Frame")
 Hub.Watermark.Name = "Watermark"
 Hub.Watermark.Size = UDim2.new(0, 480, 0, 32)
 Hub.Watermark.Position = UDim2.new(0.5, 0, 0, 15)
 Hub.Watermark.AnchorPoint = Vector2.new(0.5, 0)
-Hub.Watermark.BackgroundColor3 = Color3.fromRGB(34, 23, 61)
+Hub.Watermark.BackgroundColor3 = Color3.fromRGB(34, 23, 61) -- Тёмно-фиолетовый
 Hub.Watermark.BorderSizePixel = 0
 Hub.Watermark.Visible = false
 Hub.Watermark.Parent = Hub.ScreenGui
@@ -136,7 +144,7 @@ Hub.WMPing.BackgroundTransparency = 1
 Hub.WMPing.Size = UDim2.new(0, 50, 1, 0)
 Hub.WMPing.Parent = Hub.Watermark
 -- =========================================================================
--- ЧАСТЬ 2: ТЕКСТЫ И КНОПКИ ФОРМЫ АВТОРЗАЦИИ КЛЮЧА
+-- ЧАСТЬ 3: ТЕКСТЫ, КНОПКИ И СТРУКТУРА СТРАНИЦ ОСНОВНОГО МЕНЮ
 -- =========================================================================
 local Title = Instance.new("TextLabel")
 Title.Name = "Title"
@@ -157,7 +165,7 @@ Icon.Font = Enum.Font.GothamBold
 Icon.TextSize = 18
 Icon.TextColor3 = Color3.fromRGB(255, 255, 255)
 Icon.BackgroundTransparency = 1
-Icon.Position = UDim2.new(0, 15, 0, 10)
+Icon.Position = UDim2.new(0, 15, 0, 15)
 Icon.Size = UDim2.new(0, 22, 0, 30)
 Icon.Parent = Hub.MainFrame
 
@@ -248,9 +256,8 @@ Hub.GetKeyBtn.Size = UDim2.new(0.5, -20, 0, 45)
 Hub.GetKeyBtn.Parent = Hub.MainFrame
 local GetKeyCorner = Instance.new("UICorner")
 GetKeyCorner.CornerRadius = UDim.new(0, 8)
-Get-- =========================================================================
--- ЧАСТЬ 3: ГЕНЕРАЦИЯ ОСНОВНОГО МЕНЮ, РАЗДЕЛОВ И СТРАНИЦ ХАБА
--- =========================================================================
+GetKeyCorner.Parent = Hub.GetKeyBtn
+
 Hub.MainMenuFrame = Instance.new("Frame")
 Hub.MainMenuFrame.Name = "MainMenuFrame"
 Hub.MainMenuFrame.BackgroundColor3 = Color3.fromRGB(24, 24, 27)
@@ -337,9 +344,9 @@ ContentContainer.Position = UDim2.new(0, 160, 0, 55)
 ContentContainer.Size = UDim2.new(1, -170, 1, -65)
 ContentContainer.BackgroundTransparency = 1
 ContentContainer.Parent = Hub.MainMenuFrame
-
-Hub.Pages = {}
-
+-- =========================================================================
+-- ЧАСТЬ 4: КОНСТРУКТОР СТРАНИЦ И СОЗДАНИЕ ТУМБЛЕРОВ TOGGLE
+-- =========================================================================
 local function createPage(name)
     local Frame = Instance.new("Frame")
     Frame.Name = name
@@ -349,7 +356,7 @@ local function createPage(name)
     Frame.Parent = ContentContainer
     
     local Layout = Instance.new("UIListLayout")
-    Layout.Padding = UDim.new(0, 10)
+    Layout.Padding = UDim.new(0, 8)
     Layout.SortOrder = Enum.SortOrder.LayoutOrder
     Layout.Parent = Frame
     
@@ -386,7 +393,7 @@ addPageTitle(Hub.Pages.BossPage, "Функции Босса (Boss)")
 addPageTitle(Hub.Pages.IndexPage, "Функции Индекса")
 addPageTitle(Hub.Pages.PlotPage, "Функции Плота")
 addPageTitle(Hub.Pages.AutoStealPage, "Автоматическая кража (Auto Steal)")
-addPageTitle(Hub.Pages.Visuals, "Настройки отображения игроков (ESP)")
+addPageTitle(Hub.Pages.Visuals, "Настройки ESP (Скелеты/BOX)")
 addPageTitle(Hub.Pages.Server, "Информация о сервере")
 addPageTitle(Hub.Pages.Account, "Профиль пользователя")
 
@@ -406,6 +413,7 @@ SettingsText.BackgroundTransparency = 1
 SettingsText.Size = UDim2.new(1, 0, 0, 45)
 SettingsText.TextXAlignment = Enum.TextXAlignment.Left
 SettingsText.Parent = Hub.Pages.Settings
+
 Hub.BindBtn = Instance.new("TextButton")
 Hub.BindBtn.Name = "BindBtn"
 Hub.BindBtn.Text = "Клавиша скрытия: LeftControl"
@@ -420,7 +428,6 @@ local BindCorner = Instance.new("UICorner")
 BindCorner.CornerRadius = UDim.new(0, 6)
 BindCorner.Parent = Hub.BindBtn
 
-Hub.TabButtons = {}
 local function createCategoryHeader(titleText, order)
     local Header = Instance.new("TextLabel")
     Header.Text = "  " .. titleText:upper()
@@ -464,32 +471,26 @@ createCategoryHeader("Функции", 6)
 createCategoryHeader("Фарм", 7)
 createTabButton("Индекс", 8, "IndexPage")
 createTabButton("Плот", 9, "PlotPage")
-createTabButton("Auto Steal", 10, "AutoStealPage")
+createTabButton("Авто кража", 10, "AutoStealPage")
 createCategoryHeader("Хаб", 11)
 createTabButton("Настройки", 12, "Settings")
 createTabButton("Скелеты (BOX)", 13, "Visuals")
 createTabButton("Сервер", 14, "Server")
 createCategoryHeader("Аккаунт", 15)
 createTabButton("Account", 16)
-KeyCorner.Parent = Hub.GetKeyBtn
--- =========================================================================
--- ЧАСТЬ 4: КОНСТРУКТОР ПЕРЕКЛЮЧАТЕЛЕЙ (TOGGLE SYSTEM)
--- =========================================================================
-Hub.Toggles = {}
 
+-- КОНСТРУКТОР ДЛЯ ПЕРЕКЛЮЧАТЕЛЕЙ (TOGGLE SYSTEM)
 function Hub.createToggle(pageFrame, text, layoutOrder, callback)
     local callbackFunc = callback or function() end
     local enabled = false
     
     local ToggleFrame = Instance.new("Frame")
-    ToggleFrame.Name = text .. "ToggleFrame"
     ToggleFrame.Size = UDim2.new(1, 0, 0, 36)
     ToggleFrame.BackgroundTransparency = 1
     ToggleFrame.LayoutOrder = layoutOrder
     ToggleFrame.Parent = pageFrame
     
     local ToggleBtn = Instance.new("TextButton")
-    ToggleBtn.Name = "ToggleBtn"
     ToggleBtn.Size = UDim2.new(0, 42, 0, 22)
     ToggleBtn.Position = UDim2.new(0, 0, 0.5, 0)
     ToggleBtn.AnchorPoint = Vector2.new(0, 0.5)
@@ -503,7 +504,6 @@ function Hub.createToggle(pageFrame, text, layoutOrder, callback)
     TCorner.Parent = ToggleBtn
     
     local Circle = Instance.new("Frame")
-    Circle.Name = "Circle"
     Circle.Size = UDim2.new(0, 16, 0, 16)
     Circle.Position = UDim2.new(0, 3, 0.5, 0)
     Circle.AnchorPoint = Vector2.new(0, 0.5)
@@ -526,39 +526,23 @@ function Hub.createToggle(pageFrame, text, layoutOrder, callback)
     Label.TextXAlignment = Enum.TextXAlignment.Left
     Label.Parent = ToggleFrame
     
-    local function updateToggle()
-        if enabled then
-            TweenService:Create(ToggleBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(110, 68, 255)}):Play()
-            TweenService:Create(Circle, TweenInfo.new(0.2), {Position = UDim2.new(1, -19, 0.5, 0), BackgroundCorrection = Color3.fromRGB(255, 255, 255)}):Play()
-        else
-            TweenService:Create(ToggleBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(39, 39, 42)}):Play()
-            TweenService:Create(Circle, TweenInfo.new(0.2), {Position = UDim2.new(0, 3, 0.5, 0), BackgroundCorrection = Color3.fromRGB(161, 161, 170)}):Play()
-        end
-        task.spawn(callbackFunc, enabled)
-    end
-    
     ToggleBtn.MouseButton1Click:Connect(function()
         enabled = not enabled
-        updateToggle()
+        if enabled then
+            TweenService:Create(ToggleBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(110, 68, 255)}):Play()
+            TweenService:Create(Circle, TweenInfo.new(0.2), {Position = UDim2.new(1, -19, 0.5, 0), BackgroundColor3 = Color3.fromRGB(255, 255, 255)}):Play()
+        else
+            TweenService:Create(ToggleBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(39, 39, 42)}):Play()
+            TweenService:Create(Circle, TweenInfo.new(0.2), {Position = UDim2.new(0, 3, 0.5, 0), BackgroundColor3 = Color3.fromRGB(161, 161, 170)}):Play()
+        end
+        task.spawn(callbackFunc, enabled)
     end)
 end
 
--- СОЗДАЕМ ТУМБЛЕРЫ ДЛЯ ТВОИХ ВКЛАДОК
-Hub.createToggle(Hub.Pages.AutoStealPage, "Включить автоматический сбор ресурсов", 1, function(state)
-    print("Авто-кража предметов:", state)
-end)
-
-Hub.createToggle(Hub.Pages.Visuals, "Включить Скелеты / Box ESP", 1, function(state)
-    print("ESP подсветка игроков:", state)
-end)
-
-Hub.createToggle(Hub.Pages.RiftPage, "Автоматическое закрытие разломов", 1, function(state)
-    print("Авто-разломы:", state)
-end)
-
-Hub.createToggle(Hub.Pages.BossPage, "Автоматический фарм боссов", 1, function(state)
-    print("Авто-босс:", state)
-end)
+Hub.createToggle(Hub.Pages.AutoStealPage, "Включить автоматический сбор ресурсов", 1, function(state) print("Авто-кража предметов:", state) end)
+Hub.createToggle(Hub.Pages.Visuals, "Включить Скелеты / Box ESP", 1, function(state) print("ESP подсветка игроков:", state) end)
+Hub.createToggle(Hub.Pages.RiftPage, "Автоматическое закрытие разломов", 1, function(state) print("Авто-разломы:", state) end)
+Hub.createToggle(Hub.Pages.BossPage, "Автоматический фарм боссов", 1, function(state) print("Авто-босс:", state) end)
 -- =========================================================================
 -- ЧАСТЬ 5: ОБРАБОТКА ПОТОКОВ, СВОРЯЧИВАНИЕ ОКНА, КЛИКИ И НЕУБИВАЕМЫЙ DRAG
 -- =========================================================================
