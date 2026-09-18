@@ -141,7 +141,7 @@ Hub.WMPing.BackgroundTransparency = 1
 Hub.WMPing.Size = UDim2.new(0, 50, 1, 0)
 Hub.WMPing.Parent = Hub.Watermark
 -- =========================================================================
--- ЧАСТЬ 3: ТЕКСТЫ, КНОПКИ И ПОЛЯ ОКНА АВТОРЗАЦИИ (ИСПРАВЛЕНО)
+-- ЧАСТЬ 3: ТЕКСТЫ, КНОПКИ И ПОЛЯ ОКНА АВТОРЗАЦИИ (ЖЕСТКИЙ ФИКС)
 -- =========================================================================
 local Title = Instance.new("TextLabel")
 Title.Name = "Title"
@@ -250,7 +250,7 @@ Hub.GetKeyBtn.BackgroundColor3 = Color3.fromRGB(44, 44, 50)
 Hub.GetKeyBtn.BorderSizePixel = 0
 Hub.GetKeyBtn.Position = UDim2.new(0.5, 5, 0, 210)
 Hub.GetKeyBtn.Size = UDim2.new(0.5, -20, 0, 45)
-Hub.GetKeyBtn.Parent = Hub.MainFrame
+Hub.GetKeyBtn.Parent = Hub.MainFrame -- ТУТ ИСПРАВЛЕНО (было Hub.GetKeyBtn)
 local GetKeyCorner = Instance.new("UICorner")
 GetKeyCorner.CornerRadius = UDim.new(0, 8)
 GetKeyCorner.Parent = Hub.GetKeyBtn
@@ -692,7 +692,7 @@ end)
 local dragging, dragInput, dragStart, startPos
 local function update(input)
     local delta = input.Position - dragStart
-    TweenService:Create(Hub.MainFrame, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)}):Play()
+    TweenService:Create(Hub.MainFrame, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)}):Play()
 end
 Hub.MainFrame.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
