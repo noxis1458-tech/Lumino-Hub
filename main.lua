@@ -14,8 +14,8 @@ local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 local Hub = {}
 Hub.Pages = {}
 Hub.TabButtons = {}
+Hub.Toggles = {}
 
--- Создание защищенного ScreenGui
 Hub.ScreenGui = Instance.new("ScreenGui")
 Hub.ScreenGui.Name = "LuminoHubKeySystem"
 Hub.ScreenGui.ResetOnSpawn = false
@@ -23,7 +23,6 @@ pcall(function()
     Hub.ScreenGui.Parent = (syn and syn.protect_gui and syn.protect_gui(Hub.ScreenGui)) or CoreGui or PlayerGui
 end)
 
--- Главное окно авторизации (MainFrame)
 Hub.MainFrame = Instance.new("Frame")
 Hub.MainFrame.Name = "MainFrame"
 Hub.MainFrame.BackgroundColor3 = Color3.fromRGB(24, 24, 27)
@@ -142,7 +141,7 @@ Hub.WMPing.BackgroundTransparency = 1
 Hub.WMPing.Size = UDim2.new(0, 50, 1, 0)
 Hub.WMPing.Parent = Hub.Watermark
 -- =========================================================================
--- ЧАСТЬ 3: ТЕКСТЫ, КНОПКИ АВТОРИЗАЦИИ И СТРУКТУРА САЙДБАРА (ИСПРАВЛЕНО)
+-- ЧАСТЬ 3: ТЕКСТЫ, КНОПКИ И ПОЛЯ ОКНА АВТОРЗАЦИИ
 -- =========================================================================
 local Title = Instance.new("TextLabel")
 Title.Name = "Title"
@@ -205,7 +204,7 @@ Hub.KeyInput.BackgroundColor3 = Color3.fromRGB(34, 34, 38)
 Hub.KeyInput.BorderSizePixel = 0
 Hub.KeyInput.Position = UDim2.new(0, 15, 0, 100)
 Hub.KeyInput.Size = UDim2.new(1, -30, 0, 45)
-Hub.KeyInput.Parent = Hub.MainFrame -- ИСПРАВЛЕНО (Родитель - Главный фрейм)
+Hub.KeyInput.Parent = Hub.MainFrame
 
 local KeyInputCorner = Instance.new("UICorner")
 KeyInputCorner.CornerRadius = UDim.new(0, 8)
@@ -255,7 +254,9 @@ Hub.GetKeyBtn.Parent = Hub.MainFrame
 local GetKeyCorner = Instance.new("UICorner")
 GetKeyCorner.CornerRadius = UDim.new(0, 8)
 GetKeyCorner.Parent = Hub.GetKeyBtn
-
+-- =========================================================================
+-- ЧАСТЬ 4: ГЕНЕРАЦИЯ ОСНОВНОГО МЕНЮ, РАЗДЕЛОВ И СТРАНИЦ ХАБА
+-- =========================================================================
 Hub.MainMenuFrame = Instance.new("Frame")
 Hub.MainMenuFrame.Name = "MainMenuFrame"
 Hub.MainMenuFrame.BackgroundColor3 = Color3.fromRGB(24, 24, 27)
@@ -269,6 +270,56 @@ Hub.MainMenuFrame.Parent = Hub.ScreenGui
 local MenuCorner = Instance.new("UICorner")
 MenuCorner.CornerRadius = UDim.new(0, 12)
 MenuCorner.Parent = Hub.MainMenuFrame
+
+local HeaderFrame = Instance.new("Frame")
+HeaderFrame.Size = UDim2.new(1, 0, 0, 50)
+HeaderFrame.BackgroundTransparency = 1
+HeaderFrame.Parent = Hub.MainMenuFrame
+
+local MenuIcon = Instance.new("TextLabel")
+MenuIcon.Text = "⚡"
+MenuIcon.Font = Enum.Font.GothamBold
+MenuIcon.TextSize = 18
+MenuIcon.TextColor3 = Color3.fromRGB(255, 255, 255)
+MenuIcon.BackgroundTransparency = 1
+MenuIcon.Position = UDim2.new(0, 15, 0, 10)
+MenuIcon.Size = UDim2.new(0, 22, 0, 30)
+MenuIcon.Parent = HeaderFrame
+
+local MenuTitle = Instance.new("TextLabel")
+MenuTitle.Text = "Lumino Hub"
+MenuTitle.Font = Enum.Font.GothamBold
+MenuTitle.TextSize = 22
+MenuTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+MenuTitle.BackgroundTransparency = 1
+MenuTitle.Position = UDim2.new(0, 45, 0, 10)
+MenuTitle.Size = UDim2.new(0.5, 0, 0, 30)
+MenuTitle.TextXAlignment = Enum.TextXAlignment.Left
+MenuTitle.Parent = HeaderFrame
+
+Hub.MenuCloseButton = Instance.new("TextButton")
+Hub.MenuCloseButton.Name = "MenuCloseButton"
+Hub.MenuCloseButton.Text = "✕"
+Hub.MenuCloseButton.Font = Enum.Font.GothamBold
+Hub.MenuCloseButton.TextSize = 16
+Hub.MenuCloseButton.TextColor3 = Color3.fromRGB(150, 150, 150)
+Hub.MenuCloseButton.BackgroundTransparency = 1
+Hub.MenuCloseButton.BorderSizePixel = 0
+Hub.MenuCloseButton.Position = UDim2.new(1, -35, 0, 10)
+Hub.MenuCloseButton.Size = UDim2.new(0, 20, 0, 30)
+Hub.MenuCloseButton.Parent = HeaderFrame
+
+Hub.MenuMinimizeButton = Instance.new("TextButton")
+Hub.MenuMinimizeButton.Name = "MenuMinimizeButton"
+Hub.MenuMinimizeButton.Text = "—"
+Hub.MenuMinimizeButton.Font = Enum.Font.GothamBold
+Hub.MenuMinimizeButton.TextSize = 14
+Hub.MenuMinimizeButton.TextColor3 = Color3.fromRGB(150, 150, 150)
+Hub.MenuMinimizeButton.BackgroundTransparency = 1
+Hub.MenuMinimizeButton.BorderSizePixel = 0
+Hub.MenuMinimizeButton.Position = UDim2.new(1, -60, 0, 10)
+Hub.MenuMinimizeButton.Size = UDim2.new(0, 20, 0, 30)
+Hub.MenuMinimizeButton.Parent = HeaderFrame
 
 local Sidebar = Instance.new("Frame")
 Sidebar.Name = "Sidebar"
@@ -293,7 +344,7 @@ ContentContainer.Size = UDim2.new(1, -170, 1, -65)
 ContentContainer.BackgroundTransparency = 1
 ContentContainer.Parent = Hub.MainMenuFrame
 -- =========================================================================
--- ЧАСТЬ 4: КОНСТРУКТОР СТРАНИЦ И СИСТЕМА ФИОЛЕТОВЫХ ТУМБЛЕРОВ (ИСПРАВЛЕНО)
+-- ЧАСТЬ 5: НАПОЛНЕНИЕ СТРАНИЦ И СОЗДАНИЕ КНОПОК САЙДБАРА
 -- =========================================================================
 local function createPage(name)
     local Frame = Instance.new("Frame")
@@ -302,12 +353,10 @@ local function createPage(name)
     Frame.BackgroundTransparency = 1
     Frame.Visible = false
     Frame.Parent = ContentContainer
-    
     local Layout = Instance.new("UIListLayout")
     Layout.Padding = UDim.new(0, 8)
     Layout.SortOrder = Enum.SortOrder.LayoutOrder
     Layout.Parent = Frame
-    
     Hub.Pages[name] = Frame
     return Frame
 end
@@ -345,11 +394,22 @@ addPageTitle(Hub.Pages.Visuals, "Настройки ESP (Скелеты/BOX)")
 addPageTitle(Hub.Pages.Server, "Информация о сервере")
 addPageTitle(Hub.Pages.Account, "Профиль пользователя")
 
+Hub.Pages.Home.Visible = true
+
 Hub.Pages.Settings = Instance.new("Frame")
 Hub.Pages.Settings.Size = UDim2.new(1, 0, 1, 0)
 Hub.Pages.Settings.BackgroundTransparency = 1
 Hub.Pages.Settings.Visible = false
 Hub.Pages.Settings.Parent = ContentContainer
+local SettingsText = Instance.new("TextLabel")
+SettingsText.Text = "Настройки интерфейса:\n\nНажмите на кнопку ниже, чтобы переназначить клавишу скрытия меню."
+SettingsText.Font = Enum.Font.Gotham
+SettingsText.TextSize = 13
+SettingsText.TextColor3 = Color3.fromRGB(161, 161, 170)
+SettingsText.BackgroundTransparency = 1
+SettingsText.Size = UDim2.new(1, 0, 0, 45)
+SettingsText.TextXAlignment = Enum.TextXAlignment.Left
+SettingsText.Parent = Hub.Pages.Settings
 
 Hub.BindBtn = Instance.new("TextButton")
 Hub.BindBtn.Name = "BindBtn"
@@ -358,7 +418,7 @@ Hub.BindBtn.Font = Enum.Font.GothamBold
 Hub.BindBtn.TextSize = 12
 Hub.BindBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 Hub.BindBtn.BackgroundColor3 = Color3.fromRGB(39, 39, 42)
-Hub.BindBtn.Position = UDim2.new(0, 0, 0, 15)
+Hub.BindBtn.Position = UDim2.new(0, 0, 0, 55)
 Hub.BindBtn.Size = UDim2.new(0, 220, 0, 35)
 Hub.BindBtn.Parent = Hub.Pages.Settings
 local BindCorner = Instance.new("UICorner")
@@ -415,8 +475,9 @@ createTabButton("Скелеты (BOX)", 13, "Visuals")
 createTabButton("Сервер", 14, "Server")
 createCategoryHeader("Аккаунт", 15)
 createTabButton("Account", 16)
-
--- ИСПРАВЛЕННАЯ ФУНКЦИЯ ТУМБЛЕРОВ
+-- =========================================================================
+-- ЧАСТЬ 6: КОНСТРУКТОР ПЕРЕКЛЮЧАТЕЛЕЙ (TOGGLE SYSTEM)
+-- =========================================================================
 function Hub.createToggle(pageFrame, text, layoutOrder, callback)
     local callbackFunc = callback or function() end
     local enabled = false
@@ -476,12 +537,12 @@ function Hub.createToggle(pageFrame, text, layoutOrder, callback)
     end)
 end
 
-Hub.createToggle(Hub.Pages.AutoStealPage, "Включить автоматический сбор ресурсов", 1, function(state) print("Авто-кража предметов:", state) end)
-Hub.createToggle(Hub.Pages.Visuals, "Включить Скелеты / Box ESP", 1, function(state) print("ESP подсветка игроков:", state) end)
+Hub.createToggle(Hub.Pages.AutoStealPage, "Включить автоматический сбор ресурсов", 1, function(state) print("Авто-кража:", state) end)
+Hub.createToggle(Hub.Pages.Visuals, "Включить Скелеты / Box ESP", 1, function(state) print("ESP подсветка:", state) end)
 Hub.createToggle(Hub.Pages.RiftPage, "Автоматическое закрытие разломов", 1, function(state) print("Авто-разломы:", state) end)
 Hub.createToggle(Hub.Pages.BossPage, "Автоматический фарм боссов", 1, function(state) print("Авто-босс:", state) end)
 -- =========================================================================
--- ЧАСТЬ 5: ОБРАБОТКА ПОТОКОВ, СВОРЯЧИВАНИЕ ОКНА, КЛИКИ И НЕУБИВАЕМЫЙ DRAG
+-- ЧАСТЬ 7: ОБРАБОТКА ПОТОКОВ, СВОРЯЧИВАНИЕ ОКНА, КЛИКИ И НЕУБИВАЕМЫЙ DRAG
 -- =========================================================================
 task.spawn(function()
     local frameCount = 0 local lastUpdate = os.clock()
