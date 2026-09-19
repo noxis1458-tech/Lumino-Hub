@@ -1,699 +1,664 @@
--- =========================================================================
--- ЧАСТЬ 1: ПОДКЛЮЧЕНИЕ СЕРВИСОВ И БАЗОВАЯ НАСТРОЙКА GUI
--- =========================================================================
-local TweenService = game:GetService("TweenService")
+-- ==========================================================
+-- FLOW MASTER — ЧАСТЬ 1 ИЗ 8 (SCREEN CARCASS)
+-- ==========================================================
 local CoreGui = game:GetService("CoreGui")
 local UserInputService = game:GetService("UserInputService")
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local Stats = game:GetService("Stats")
+local TweenService = game:GetService("TweenService")
 
-local LocalPlayer = Players.LocalPlayer or Players.PlayerAdded:Wait()
-local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
-
-local Hub = {}
-Hub.Pages = {}
-Hub.TabButtons = {}
-Hub.Toggles = {}
-
-Hub.ScreenGui = Instance.new("ScreenGui")
-Hub.ScreenGui.Name = "LuminoHubKeySystem"
-Hub.ScreenGui.ResetOnSpawn = false
-pcall(function()
-    Hub.ScreenGui.Parent = (syn and syn.protect_gui and syn.protect_gui(Hub.ScreenGui)) or CoreGui or PlayerGui
-end)
-
-Hub.MainFrame = Instance.new("Frame")
-Hub.MainFrame.Name = "MainFrame"
-Hub.MainFrame.BackgroundColor3 = Color3.fromRGB(24, 24, 27)
-Hub.MainFrame.BorderSizePixel = 0
-Hub.MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
-Hub.MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-Hub.MainFrame.ClipsDescendants = true
-Hub.MainFrame.Visible = true
-Hub.MainFrame.Parent = Hub.ScreenGui
-
-local MainCorner = Instance.new("UICorner")
-MainCorner.CornerRadius = UDim.new(0, 12)
-MainCorner.Parent = Hub.MainFrame
--- =========================================================================
--- ЧАСТЬ 2: СОЗДАНИЕ ВЕРХНЕЙ ПЛАШКИ WATERMARK
--- =========================================================================
-Hub.Watermark = Instance.new("Frame")
-Hub.Watermark.Name = "Watermark"
-Hub.Watermark.Size = UDim2.new(0, 480, 0, 32)
-Hub.Watermark.Position = UDim2.new(0.5, 0, 0, 15)
-Hub.Watermark.AnchorPoint = Vector2.new(0.5, 0)
-Hub.Watermark.BackgroundColor3 = Color3.fromRGB(34, 23, 61)
-Hub.Watermark.BorderSizePixel = 0
-Hub.Watermark.Visible = false
-Hub.Watermark.Parent = Hub.ScreenGui
-
-local WMCorner = Instance.new("UICorner")
-WMCorner.CornerRadius = UDim.new(1, 0)
-WMCorner.Parent = Hub.Watermark
-
-local WMList = Instance.new("UIListLayout")
-WMList.FillDirection = Enum.FillDirection.Horizontal
-WMList.HorizontalAlignment = Enum.HorizontalAlignment.Center
-WMList.VerticalAlignment = Enum.VerticalAlignment.Center
-WMList.Padding = UDim.new(0, 8)
-WMList.Parent = Hub.Watermark
-
-local WMLogo = Instance.new("TextLabel")
-WMLogo.Text = " ⚡"
-WMLogo.Font = Enum.Font.GothamBold
-WMLogo.TextSize = 14
-WMLogo.TextColor3 = Color3.fromRGB(245, 158, 11)
-WMLogo.BackgroundTransparency = 1
-WMLogo.Size = UDim2.new(0, 20, 1, 0)
-WMLogo.Parent = Hub.Watermark
-
-local WMTitle = Instance.new("TextLabel")
-WMTitle.Text = "Lumino Hub"
-WMTitle.Font = Enum.Font.GothamBold
-WMTitle.TextSize = 13
-WMTitle.TextColor3 = Color3.fromRGB(168, 85, 247)
-WMTitle.BackgroundTransparency = 1
-WMTitle.Size = UDim2.new(0, 75, 1, 0)
-WMTitle.Parent = Hub.Watermark
-
-local WMVersion = Instance.new("TextLabel")
-WMVersion.Text = "v1.0"
-WMVersion.Font = Enum.Font.GothamMedium
-WMVersion.TextSize = 12
-WMVersion.TextColor3 = Color3.fromRGB(161, 161, 170)
-WMVersion.BackgroundTransparency = 1
-WMVersion.Size = UDim2.new(0, 30, 1, 0)
-WMVersion.Parent = Hub.Watermark
-
-local Dot1 = Instance.new("TextLabel")
-Dot1.Text = "•"
-Dot1.Font = Enum.Font.GothamBold
-Dot1.TextSize = 12
-Dot1.TextColor3 = Color3.fromRGB(82, 82, 91)
-Dot1.BackgroundTransparency = 1
-Dot1.Size = UDim2.new(0, 5, 1, 0)
-Dot1.Parent = Hub.Watermark
-
-local WMTelegram = Instance.new("TextLabel")
-WMTelegram.Text = "telegram:the_silent52"
-WMTelegram.Font = Enum.Font.GothamSemibold
-WMTelegram.TextSize = 12
-WMTelegram.TextColor3 = Color3.fromRGB(192, 132, 252)
-WMTelegram.BackgroundTransparency = 1
-WMTelegram.Size = UDim2.new(0, 130, 1, 0)
-WMTelegram.Parent = Hub.Watermark
-
-local Dot2 = Instance.new("TextLabel")
-Dot2.Text = "•"
-Dot2.Font = Enum.Font.GothamBold
-Dot2.TextSize = 12
-Dot2.TextColor3 = Color3.fromRGB(82, 82, 91)
-Dot2.BackgroundTransparency = 1
-Dot2.Size = UDim2.new(0, 5, 1, 0)
-Dot2.Parent = Hub.Watermark
-
-Hub.WMFps = Instance.new("TextLabel")
-Hub.WMFps.Text = "0 fps"
-Hub.WMFps.Font = Enum.Font.GothamBold
-Hub.WMFps.TextSize = 12
-Hub.WMFps.TextColor3 = Color3.fromRGB(34, 211, 238)
-Hub.WMFps.BackgroundTransparency = 1
-Hub.WMFps.Size = UDim2.new(0, 45, 1, 0)
-Hub.WMFps.Parent = Hub.Watermark
-
-local Dot3 = Instance.new("TextLabel")
-Dot3.Text = "•"
-Dot3.Font = Enum.Font.GothamBold
-Dot3.TextSize = 12
-Dot3.TextColor3 = Color3.fromRGB(82, 82, 91)
-Dot3.BackgroundTransparency = 1
-Dot3.Size = UDim2.new(0, 5, 1, 0)
-Dot3.Parent = Hub.Watermark
-
-Hub.WMPing = Instance.new("TextLabel")
-Hub.WMPing.Text = "0 ms "
-Hub.WMPing.Font = Enum.Font.GothamBold
-Hub.WMPing.TextSize = 12
-Hub.WMPing.TextColor3 = Color3.fromRGB(161, 161, 170)
-Hub.WMPing.BackgroundTransparency = 1
-Hub.WMPing.Size = UDim2.new(0, 50, 1, 0)
-Hub.WMPing.Parent = Hub.Watermark
--- =========================================================================
--- ЧАСТЬ 3: ТЕКСТЫ, КНОПКИ И ПОЛЯ ОКНА АВТОРЗАЦИИ
--- =========================================================================
-local Title = Instance.new("TextLabel")
-Title.Name = "Title"
-Title.Text = "Lumino Hub"
-Title.Font = Enum.Font.GothamBold
-Title.TextSize = 22
-Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-Title.TextXAlignment = Enum.TextXAlignment.Left
-Title.BackgroundTransparency = 1
-Title.Position = UDim2.new(0, 45, 0, 15)
-Title.Size = UDim2.new(0.6, 0, 0, 30)
-Title.Parent = Hub.MainFrame
-
-local Icon = Instance.new("TextLabel")
-Icon.Name = "Icon"
-Icon.Text = "⚡"
-Icon.Font = Enum.Font.GothamBold
-Icon.TextSize = 18
-Icon.TextColor3 = Color3.fromRGB(255, 255, 255)
-Icon.BackgroundTransparency = 1
-Icon.Position = UDim2.new(0, 15, 0, 15)
-Icon.Size = UDim2.new(0, 22, 0, 30)
-Icon.Parent = Hub.MainFrame
-
-Hub.CloseButton = Instance.new("TextButton")
-Hub.CloseButton.Name = "CloseButton"
-Hub.CloseButton.Text = "✕"
-Hub.CloseButton.Font = Enum.Font.GothamBold
-Hub.CloseButton.TextSize = 16
-Hub.CloseButton.TextColor3 = Color3.fromRGB(150, 150, 150)
-Hub.CloseButton.BackgroundTransparency = 1
-Hub.CloseButton.BorderSizePixel = 0
-Hub.CloseButton.Position = UDim2.new(1, -35, 0, 15)
-Hub.CloseButton.Size = UDim2.new(0, 20, 0, 30)
-Hub.CloseButton.Parent = Hub.MainFrame
-
-local InfoText = Instance.new("TextLabel")
-InfoText.Name = "InfoText"
-InfoText.Text = "Having trouble getting a key or checking your key?\nJoin my Telegram server for assistance"
-InfoText.Font = Enum.Font.Gotham
-InfoText.TextSize = 12
-InfoText.TextColor3 = Color3.fromRGB(161, 161, 170)
-InfoText.TextWrapped = true
-InfoText.TextXAlignment = Enum.TextXAlignment.Left
-InfoText.TextYAlignment = Enum.TextYAlignment.Top
-InfoText.BackgroundTransparency = 1
-InfoText.Position = UDim2.new(0, 15, 0, 55)
-InfoText.Size = UDim2.new(1, -30, 0, 35)
-InfoText.Parent = Hub.MainFrame
-
-Hub.KeyInput = Instance.new("TextBox")
-Hub.KeyInput.Name = "KeyInput"
-Hub.KeyInput.PlaceholderText = "Enter your key here..."
-Hub.KeyInput.Text = ""
-Hub.KeyInput.Font = Enum.Font.Gotham
-Hub.KeyInput.TextSize = 14
-Hub.KeyInput.TextColor3 = Color3.fromRGB(255, 255, 255)
-Hub.KeyInput.PlaceholderColor3 = Color3.fromRGB(82, 82, 91)
-Hub.KeyInput.BackgroundColor3 = Color3.fromRGB(34, 34, 38)
-Hub.KeyInput.BorderSizePixel = 0
-Hub.KeyInput.Position = UDim2.new(0, 15, 0, 100)
-Hub.KeyInput.Size = UDim2.new(1, -30, 0, 45)
-Hub.KeyInput.Parent = Hub.MainFrame
-
-local KeyInputCorner = Instance.new("UICorner")
-KeyInputCorner.CornerRadius = UDim.new(0, 8)
-KeyInputCorner.Parent = Hub.KeyInput
-
-Hub.CheckBtn = Instance.new("TextButton")
-Hub.CheckBtn.Name = "CheckBtn"
-Hub.CheckBtn.Text = "Check Key"
-Hub.CheckBtn.Font = Enum.Font.GothamBold
-Hub.CheckBtn.TextSize = 14
-Hub.CheckBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-Hub.CheckBtn.BackgroundColor3 = Color3.fromRGB(54, 32, 94)
-Hub.CheckBtn.BorderSizePixel = 0
-Hub.CheckBtn.Position = UDim2.new(0, 15, 0, 155)
-Hub.CheckBtn.Size = UDim2.new(1, -30, 0, 45)
-Hub.CheckBtn.Parent = Hub.MainFrame
-local CheckCorner = Instance.new("UICorner")
-CheckCorner.CornerRadius = UDim.new(0, 8)
-CheckCorner.Parent = Hub.CheckBtn
-
-Hub.SupportBtn = Instance.new("TextButton")
-Hub.SupportBtn.Name = "SupportBtn"
-Hub.SupportBtn.Text = "Support"
-Hub.SupportBtn.Font = Enum.Font.GothamBold
-Hub.SupportBtn.TextSize = 14
-Hub.SupportBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-Hub.SupportBtn.BackgroundColor3 = Color3.fromRGB(44, 44, 50)
-Hub.SupportBtn.BorderSizePixel = 0
-Hub.SupportBtn.Position = UDim2.new(0, 15, 0, 210)
-Hub.SupportBtn.Size = UDim2.new(0.5, -20, 0, 45)
-Hub.SupportBtn.Parent = Hub.MainFrame
-local SupportCorner = Instance.new("UICorner")
-SupportCorner.CornerRadius = UDim.new(0, 8)
-SupportCorner.Parent = Hub.SupportBtn
-
-Hub.GetKeyBtn = Instance.new("TextButton")
-Hub.GetKeyBtn.Name = "GetKeyBtn"
-Hub.GetKeyBtn.Text = "Get Key"
-Hub.GetKeyBtn.Font = Enum.Font.GothamBold
-Hub.GetKeyBtn.TextSize = 14
-Hub.GetKeyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-Hub.GetKeyBtn.BackgroundColor3 = Color3.fromRGB(44, 44, 50)
-Hub.GetKeyBtn.BorderSizePixel = 0
-Hub.GetKeyBtn.Position = UDim2.new(0.5, 5, 0, 210)
-Hub.GetKeyBtn.Size = UDim2.new(0.5, -20, 0, 45)
-Hub.GetKeyBtn.Parent = Hub.MainFrame
-local GetKeyCorner = Instance.new("UICorner")
-GetKeyCorner.CornerRadius = UDim.new(0, 8)
-GetKeyCorner.Parent = Hub.GetKeyBtn
--- =========================================================================
--- ЧАСТЬ 4: ГЕНЕРАЦИЯ ОСНОВНОГО МЕНЮ, РАЗДЕЛОВ И СТРАНИЦ ХАБА
--- =========================================================================
-Hub.MainMenuFrame = Instance.new("Frame")
-Hub.MainMenuFrame.Name = "MainMenuFrame"
-Hub.MainMenuFrame.BackgroundColor3 = Color3.fromRGB(24, 24, 27)
-Hub.MainMenuFrame.BorderSizePixel = 0
-Hub.MainMenuFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
-Hub.MainMenuFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-Hub.MainMenuFrame.Size = UDim2.new(0, 0, 0, 0)
-Hub.MainMenuFrame.ClipsDescendants = true
-Hub.MainMenuFrame.Visible = false
-Hub.MainMenuFrame.Parent = Hub.ScreenGui
-local MenuCorner = Instance.new("UICorner")
-MenuCorner.CornerRadius = UDim.new(0, 12)
-MenuCorner.Parent = Hub.MainMenuFrame
-
-local HeaderFrame = Instance.new("Frame")
-HeaderFrame.Size = UDim2.new(1, 0, 0, 50)
-HeaderFrame.BackgroundTransparency = 1
-HeaderFrame.Parent = Hub.MainMenuFrame
-
-local MenuIcon = Instance.new("TextLabel")
-MenuIcon.Text = "⚡"
-MenuIcon.Font = Enum.Font.GothamBold
-MenuIcon.TextSize = 18
-MenuIcon.TextColor3 = Color3.fromRGB(255, 255, 255)
-MenuIcon.BackgroundTransparency = 1
-MenuIcon.Position = UDim2.new(0, 15, 0, 10)
-MenuIcon.Size = UDim2.new(0, 22, 0, 30)
-MenuIcon.Parent = HeaderFrame
-
-local MenuTitle = Instance.new("TextLabel")
-MenuTitle.Text = "Lumino Hub"
-MenuTitle.Font = Enum.Font.GothamBold
-MenuTitle.TextSize = 22
-MenuTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-MenuTitle.BackgroundTransparency = 1
-MenuTitle.Position = UDim2.new(0, 45, 0, 10)
-MenuTitle.Size = UDim2.new(0.5, 0, 0, 30)
-MenuTitle.TextXAlignment = Enum.TextXAlignment.Left
-MenuTitle.Parent = HeaderFrame
-
-Hub.MenuCloseButton = Instance.new("TextButton")
-Hub.MenuCloseButton.Name = "MenuCloseButton"
-Hub.MenuCloseButton.Text = "✕"
-Hub.MenuCloseButton.Font = Enum.Font.GothamBold
-Hub.MenuCloseButton.TextSize = 16
-Hub.MenuCloseButton.TextColor3 = Color3.fromRGB(150, 150, 150)
-Hub.MenuCloseButton.BackgroundTransparency = 1
-Hub.MenuCloseButton.BorderSizePixel = 0
-Hub.MenuCloseButton.Position = UDim2.new(1, -35, 0, 10)
-Hub.MenuCloseButton.Size = UDim2.new(0, 20, 0, 30)
-Hub.MenuCloseButton.Parent = HeaderFrame
-
-Hub.MenuMinimizeButton = Instance.new("TextButton")
-Hub.MenuMinimizeButton.Name = "MenuMinimizeButton"
-Hub.MenuMinimizeButton.Text = "—"
-Hub.MenuMinimizeButton.Font = Enum.Font.GothamBold
-Hub.MenuMinimizeButton.TextSize = 14
-Hub.MenuMinimizeButton.TextColor3 = Color3.fromRGB(150, 150, 150)
-Hub.MenuMinimizeButton.BackgroundTransparency = 1
-Hub.MenuMinimizeButton.BorderSizePixel = 0
-Hub.MenuMinimizeButton.Position = UDim2.new(1, -60, 0, 10)
-Hub.MenuMinimizeButton.Size = UDim2.new(0, 20, 0, 30)
-Hub.MenuMinimizeButton.Parent = HeaderFrame
-
-local Sidebar = Instance.new("Frame")
-Sidebar.Name = "Sidebar"
-Sidebar.Position = UDim2.new(0, 10, 0, 55)
-Sidebar.Size = UDim2.new(0, 140, 1, -65)
-Sidebar.BackgroundColor3 = Color3.fromRGB(30, 30, 33)
-Sidebar.BorderSizePixel = 0
-Sidebar.Parent = Hub.MainMenuFrame
-local SidebarCorner = Instance.new("UICorner")
-SidebarCorner.CornerRadius = UDim.new(0, 8)
-SidebarCorner.Parent = Sidebar
-
-local SidebarList = Instance.new("UIListLayout")
-SidebarList.Padding = UDim.new(0, 4)
-SidebarList.SortOrder = Enum.SortOrder.LayoutOrder
-SidebarList.Parent = Sidebar
-
-local ContentContainer = Instance.new("Frame")
-ContentContainer.Name = "ContentContainer"
-ContentContainer.Position = UDim2.new(0, 160, 0, 55)
-ContentContainer.Size = UDim2.new(1, -170, 1, -65)
-ContentContainer.BackgroundTransparency = 1
-ContentContainer.Parent = Hub.MainMenuFrame
--- =========================================================================
--- ЧАСТЬ 5: НАПОЛНЕНИЕ СТРАНИЦ И СОЗДАНИЕ КНОПОК САЙДБАРА
--- =========================================================================
-local function createPage(name)
-    local Frame = Instance.new("Frame")
-    Frame.Name = name
-    Frame.Size = UDim2.new(1, 0, 1, 0)
-    Frame.BackgroundTransparency = 1
-    Frame.Visible = false
-    Frame.Parent = ContentContainer
-    local Layout = Instance.new("UIListLayout")
-    Layout.Padding = UDim.new(0, 8)
-    Layout.SortOrder = Enum.SortOrder.LayoutOrder
-    Layout.Parent = Frame
-    Hub.Pages[name] = Frame
-    return Frame
+if CoreGui:FindFirstChild("FlowLoaderGUI") then 
+    CoreGui.FlowLoaderGUI:Destroy() 
 end
 
-createPage("Home")
-createPage("RiftPage")
-createPage("BossPage")
-createPage("IndexPage")
-createPage("PlotPage")
-createPage("AutoStealPage")
-createPage("Visuals")
-createPage("Server")
-createPage("Account")
+_G.ScreenGui = Instance.new("ScreenGui")
+_G.ScreenGui.Name = "FlowLoaderGUI"
+_G.ScreenGui.ResetOnSpawn = false
+_G.ScreenGui.Parent = CoreGui
 
-local function addPageTitle(pageFrame, text)
-    local TitleLabel = Instance.new("TextLabel")
-    TitleLabel.Text = text
-    TitleLabel.Font = Enum.Font.GothamBold
-    TitleLabel.TextSize = 14
-    TitleLabel.TextColor3 = Color3.fromRGB(240, 240, 240)
-    TitleLabel.BackgroundTransparency = 1
-    TitleLabel.Size = UDim2.new(1, 0, 0, 25)
-    TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
-    TitleLabel.LayoutOrder = 0
-    TitleLabel.Parent = pageFrame
-end
+_G.MainFrame = Instance.new("Frame", _G.ScreenGui)
+_G.MainFrame.Name = "MainFrame"
+_G.MainFrame.Size = UDim2.new(0, 550, 0, 420)
+_G.MainFrame.Position = UDim2.new(0.5, -275, 0.5, -210)
+_G.MainFrame.BackgroundColor3 = Color3.fromRGB(18, 18, 22)
+_G.MainFrame.BorderSizePixel = 0
+_G.MainFrame.Active = true
+_G.MainFrame.ZIndex = 1
+Instance.new("UICorner", _G.MainFrame).CornerRadius = UDim.new(0, 8)
 
-addPageTitle(Hub.Pages.Home, "Главная страница")
-addPageTitle(Hub.Pages.RiftPage, "Функции Разлома (Rift)")
-addPageTitle(Hub.Pages.BossPage, "Функции Босса (Boss)")
-addPageTitle(Hub.Pages.IndexPage, "Функции Индекса")
-addPageTitle(Hub.Pages.PlotPage, "Функции Плота")
-addPageTitle(Hub.Pages.AutoStealPage, "Автоматическая кража (Auto Steal)")
-addPageTitle(Hub.Pages.Visuals, "Настройки ESP (Скелеты/BOX)")
-addPageTitle(Hub.Pages.Server, "Информация о сервере")
-addPageTitle(Hub.Pages.Account, "Профиль пользователя")
-
-Hub.Pages.Home.Visible = true
-
-Hub.Pages.Settings = Instance.new("Frame")
-Hub.Pages.Settings.Size = UDim2.new(1, 0, 1, 0)
-Hub.Pages.Settings.BackgroundTransparency = 1
-Hub.Pages.Settings.Visible = false
-Hub.Pages.Settings.Parent = ContentContainer
-local SettingsText = Instance.new("TextLabel")
-SettingsText.Text = "Настройки интерфейса:\n\nНажмите на кнопку ниже, чтобы переназначить клавишу скрытия меню."
-SettingsText.Font = Enum.Font.Gotham
-SettingsText.TextSize = 13
-SettingsText.TextColor3 = Color3.fromRGB(161, 161, 170)
-SettingsText.BackgroundTransparency = 1
-SettingsText.Size = UDim2.new(1, 0, 0, 45)
-SettingsText.TextXAlignment = Enum.TextXAlignment.Left
-SettingsText.Parent = Hub.Pages.Settings
-
-Hub.BindBtn = Instance.new("TextButton")
-Hub.BindBtn.Name = "BindBtn"
-Hub.BindBtn.Text = "Клавиша скрытия: LeftControl"
-Hub.BindBtn.Font = Enum.Font.GothamBold
-Hub.BindBtn.TextSize = 12
-Hub.BindBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-Hub.BindBtn.BackgroundColor3 = Color3.fromRGB(39, 39, 42)
-Hub.BindBtn.Position = UDim2.new(0, 0, 0, 55)
-Hub.BindBtn.Size = UDim2.new(0, 220, 0, 35)
-Hub.BindBtn.Parent = Hub.Pages.Settings
-local BindCorner = Instance.new("UICorner")
-BindCorner.CornerRadius = UDim.new(0, 6)
-BindCorner.Parent = Hub.BindBtn
-
-local function createCategoryHeader(titleText, order)
-    local Header = Instance.new("TextLabel")
-    Header.Text = "  " .. titleText:upper()
-    Header.Font = Enum.Font.GothamBold
-    Header.TextSize = 10
-    Header.TextColor3 = Color3.fromRGB(110, 68, 255)
-    Header.BackgroundTransparency = 1
-    Header.Size = UDim2.new(1, 0, 0, 20)
-    Header.TextXAlignment = Enum.TextXAlignment.Left
-    Header.LayoutOrder = order
-    Header.Parent = Sidebar
-end
-
-local function createTabButton(name, order, internalName)
-    local actualName = internalName or name
-    local TabBtn = Instance.new("TextButton")
-    TabBtn.Name = actualName .. "Tab"
-    TabBtn.Text = "   " .. name
-    TabBtn.Font = Enum.Font.GothamSemibold
-    TabBtn.TextSize = 12
-    TabBtn.TextColor3 = Color3.fromRGB(160, 160, 165)
-    TabBtn.BackgroundColor3 = Color3.fromRGB(39, 39, 42)
-    TabBtn.BackgroundTransparency = 1
-    TabBtn.BorderSizePixel = 0
-    TabBtn.Size = UDim2.new(1, 0, 0, 26)
-    TabBtn.TextXAlignment = Enum.TextXAlignment.Left
-    TabBtn.LayoutOrder = order
-    TabBtn.Parent = Sidebar
-    local BtnCorner = Instance.new("UICorner")
-    BtnCorner.CornerRadius = UDim.new(0, 5)
-    BtnCorner.Parent = TabBtn
-    Hub.TabButtons[actualName] = TabBtn
-end
-
-createCategoryHeader("Ивент", 1)
-createTabButton("Разлом", 2, "RiftPage")
-createTabButton("Босс", 3, "BossPage")
-createCategoryHeader("Главное", 4)
-createTabButton("Home", 5)
-createCategoryHeader("Функции", 6)
-createCategoryHeader("Фарм", 7)
-createTabButton("Индекс", 8, "IndexPage")
-createTabButton("Плот", 9, "PlotPage")
-createTabButton("Авто кража", 10, "AutoStealPage")
-createCategoryHeader("Хаб", 11)
-createTabButton("Настройки", 12, "Settings")
-createTabButton("Скелеты (BOX)", 13, "Visuals")
-createTabButton("Сервер", 14, "Server")
-createCategoryHeader("Аккаунт", 15)
-createTabButton("Account", 16)
--- =========================================================================
--- ЧАСТЬ 6: КОНСТРУКТОР ПЕРЕКЛЮЧАТЕЛЕЙ (TOGGLE SYSTEM)
--- =========================================================================
-function Hub.createToggle(pageFrame, text, layoutOrder, callback)
-    local callbackFunc = callback or function() end
-    local enabled = false
-    
-    local ToggleFrame = Instance.new("Frame")
-    ToggleFrame.Size = UDim2.new(1, 0, 0, 36)
-    ToggleFrame.BackgroundTransparency = 1
-    ToggleFrame.LayoutOrder = layoutOrder
-    ToggleFrame.Parent = pageFrame
-    
-    local ToggleBtn = Instance.new("TextButton")
-    ToggleBtn.Size = UDim2.new(0, 42, 0, 22)
-    ToggleBtn.Position = UDim2.new(0, 0, 0.5, 0)
-    ToggleBtn.AnchorPoint = Vector2.new(0, 0.5)
-    ToggleBtn.BackgroundColor3 = Color3.fromRGB(39, 39, 42)
-    ToggleBtn.Text = ""
-    ToggleBtn.BorderSizePixel = 0
-    ToggleBtn.Parent = ToggleFrame
-    
-    local TCorner = Instance.new("UICorner")
-    TCorner.CornerRadius = UDim.new(1, 0)
-    TCorner.Parent = ToggleBtn
-    
-    local Circle = Instance.new("Frame")
-    Circle.Size = UDim2.new(0, 16, 0, 16)
-    Circle.Position = UDim2.new(0, 3, 0.5, 0)
-    Circle.AnchorPoint = Vector2.new(0, 0.5)
-    Circle.BackgroundColor3 = Color3.fromRGB(161, 161, 170)
-    Circle.BorderSizePixel = 0
-    Circle.Parent = ToggleBtn
-    
-    local CCorner = Instance.new("UICorner")
-    CCorner.CornerRadius = UDim.new(1, 0)
-    CCorner.Parent = Circle
-    
-    local Label = Instance.new("TextLabel")
-    Label.Text = text
-    Label.Font = Enum.Font.GothamMedium
-    Label.TextSize = 13
-    Label.TextColor3 = Color3.fromRGB(200, 200, 205)
-    Label.BackgroundTransparency = 1
-    Label.Position = UDim2.new(0, 55, 0, 0)
-    Label.Size = UDim2.new(1, -60, 1, 0)
-    Label.TextXAlignment = Enum.TextXAlignment.Left
-    Label.Parent = ToggleFrame
-    
-    ToggleBtn.MouseButton1Click:Connect(function()
-        enabled = not enabled
-        if enabled then
-            TweenService:Create(ToggleBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(110, 68, 255)}):Play()
-            TweenService:Create(Circle, TweenInfo.new(0.2), {Position = UDim2.new(1, -19, 0.5, 0), BackgroundColor3 = Color3.fromRGB(255, 255, 255)}):Play()
-        else
-            TweenService:Create(ToggleBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(39, 39, 42)}):Play()
-            TweenService:Create(Circle, TweenInfo.new(0.2), {Position = UDim2.new(0, 3, 0.5, 0), BackgroundColor3 = Color3.fromRGB(161, 161, 170)}):Play()
-        end
-        task.spawn(callbackFunc, enabled)
-    end)
-end
-
-Hub.createToggle(Hub.Pages.AutoStealPage, "Включить автоматический сбор ресурсов", 1, function(state) print("Авто-кража:", state) end)
-Hub.createToggle(Hub.Pages.Visuals, "Включить Скелеты / Box ESP", 1, function(state) print("ESP подсветка:", state) end)
-Hub.createToggle(Hub.Pages.RiftPage, "Автоматическое закрытие разломов", 1, function(state) print("Авто-разломы:", state) end)
-Hub.createToggle(Hub.Pages.BossPage, "Автоматический фарм боссов", 1, function(state) print("Авто-босс:", state) end)
--- =========================================================================
--- ЧАСТЬ 7: ОБРАБОТКА ПОТОКОВ, СВОРЯЧИВАНИЕ ОКНА, КЛИКИ И НЕУБИВАЕМЫЙ DRAG
--- =========================================================================
-task.spawn(function()
-    local frameCount = 0 local lastUpdate = os.clock()
-    RunService.RenderStepped:Connect(function()
-        frameCount = frameCount + 1 local now = os.clock()
-        if now - lastUpdate >= 1 then
-            Hub.WMFps.Text = tostring(math.floor(frameCount / (now - lastUpdate))) .. " fps"
-            local ping = math.floor(Stats.Network.ServerTickRate:GetValue() or 0)
-            if ping == 0 then ping = math.floor(Stats.PerformanceStats.Ping:GetValue() or 25) end
-            Hub.WMPing.Text = tostring(ping) .. " ms "
-            frameCount = 0 lastUpdate = now
-        end
-    end)
-end)
-
-local function createNotification(text, width)
-    local frameWidth = width or 240
-    local NotifFrame = Instance.new("Frame")
-    NotifFrame.BackgroundColor3 = Color3.fromRGB(34, 34, 38)
-    NotifFrame.BorderSizePixel = 0
-    NotifFrame.Position = UDim2.new(1, 50, 0.85, 0)
-    NotifFrame.Size = UDim2.new(0, frameWidth, 0, 50)
-    NotifFrame.Parent = Hub.ScreenGui
-    local NotifCorner = Instance.new("UICorner")
-    NotifCorner.CornerRadius = UDim.new(0, 8)
-    NotifCorner.Parent = NotifFrame
-    local LeftBar = Instance.new("Frame")
-    LeftBar.BackgroundColor3 = Color3.fromRGB(110, 68, 255)
-    LeftBar.BorderSizePixel = 0
-    LeftBar.Size = UDim2.new(0, 5, 1, 0)
-    LeftBar.Parent = NotifFrame
-    local BarCorner = Instance.new("UICorner")
-    BarCorner.CornerRadius = UDim.new(0, 8)
-    BarCorner.Parent = LeftBar
-    local NotifText = Instance.new("TextLabel")
-    NotifText.BackgroundTransparency = 1
-    NotifText.Position = UDim2.new(0, 15, 0, 0)
-    NotifText.Size = UDim2.new(1, -20, 1, 0)
-    NotifText.Font = Enum.Font.GothamMedium
-    NotifText.Text = text
-    NotifText.TextColor3 = Color3.fromRGB(240, 240, 240)
-    NotifText.TextSize = 12
-    NotifText.TextWrapped = true
-    NotifText.TextXAlignment = Enum.TextXAlignment.Left
-    NotifText.Parent = NotifFrame
-    TweenService:Create(NotifFrame, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Position = UDim2.new(1, -(frameWidth + 20), 0.85, 0)}):Play()
-    task.delay(3.5, function()
-        local slideOut = TweenService:Create(NotifFrame, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Position = UDim2.new(1, 50, 0.85, 0)})
-        slideOut:Play() slideOut.Completed:Connect(function() NotifFrame:Destroy() end)
-    end)
-end
-
-local function copyTelegram()
-    local telegramTag = "the_silent52"
-    if setclipboard then setclipboard(telegramTag) elseif toclipboard then toclipboard(telegramTag) end
-end
-
-Hub.SupportBtn.MouseButton1Click:Connect(function() copyTelegram() createNotification("📋 Telegram скопирован!", 240) end)
-Hub.GetKeyBtn.MouseButton1Click:Connect(function() copyTelegram() createNotification("📱 Вы скопировали мой юзер, напишите мне", 310) end)
-
-local toggleKey = Enum.KeyCode.LeftControl
-local isBinding = false local menuVisible = true local isMenuTweening = false
-local finalMenuSize = UDim2.new(0, 500, 0, 320)
-
-local function switchTab(tabName)
-    for pageName, pageFrame in pairs(Hub.Pages) do pageFrame.Visible = false end
-    for btnName, btnEl in pairs(Hub.TabButtons) do
-        TweenService:Create(btnEl, TweenInfo.new(0.2), {BackgroundTransparency = 1, TextColor3 = Color3.fromRGB(160, 160, 165)}):Play()
-    end
-    if Hub.Pages[tabName] then Hub.Pages[tabName].Visible = true end
-    if Hub.TabButtons[tabName] then
-        TweenService:Create(Hub.TabButtons[tabName], TweenInfo.new(0.2), {BackgroundTransparency = 0, BackgroundColor3 = Color3.fromRGB(54, 32, 94), TextColor3 = Color3.fromRGB(255, 255, 255)}):Play()
-    end
-end
-
-Hub.TabButtons.Home.MouseButton1Click:Connect(function() switchTab("Home") end)
-Hub.TabButtons.RiftPage.MouseButton1Click:Connect(function() switchTab("RiftPage") end)
-Hub.TabButtons.BossPage.MouseButton1Click:Connect(function() switchTab("BossPage") end)
-Hub.TabButtons.IndexPage.MouseButton1Click:Connect(function() switchTab("IndexPage") end)
-Hub.TabButtons.PlotPage.MouseButton1Click:Connect(function() switchTab("PlotPage") end)
-Hub.TabButtons.AutoStealPage.MouseButton1Click:Connect(function() switchTab("AutoStealPage") end)
-Hub.TabButtons.Settings.MouseButton1Click:Connect(function() switchTab("Settings") end)
-Hub.TabButtons.Visuals.MouseButton1Click:Connect(function() switchTab("Visuals") end)
-Hub.TabButtons.Server.MouseButton1Click:Connect(function() switchTab("Server") end)
-Hub.TabButtons.Account.MouseButton1Click:Connect(function() switchTab("Account") end)
-
-local function toggleMenu()
-    if isMenuTweening then return end isMenuTweening = true
-    if menuVisible then
-        local closeTween = TweenService:Create(Hub.MainMenuFrame, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Size = UDim2.new(0, 0, 0, 0), BackgroundTransparency = 1})
-        closeTween:Play() closeTween.Completed:Connect(function() Hub.MainMenuFrame.Visible = false menuVisible = false isMenuTweening = false end)
-    else
-        Hub.MainMenuFrame.Visible = true
-        local openTween = TweenService:Create(Hub.MainMenuFrame, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = finalMenuSize, BackgroundTransparency = 0})
-        openTween:Play() openTween.Completed:Connect(function() menuVisible = true isMenuTweening = false end)
-    end
-end
-
-Hub.MenuMinimizeButton.MouseButton1Click:Connect(toggleMenu)
-Hub.BindBtn.MouseButton1Click:Connect(function() if not isBinding then isBinding = true Hub.BindBtn.Text = "Нажмите любую клавишу..." Hub.BindBtn.BackgroundColor3 = Color3.fromRGB(54, 32, 94) end end)
-
-UserInputService.InputBegan:Connect(function(input, gameProcessed)
-    if isBinding and input.UserInputType == Enum.UserInputType.Keyboard then
-        toggleKey = input.KeyCode Hub.BindBtn.Text = "Клавиша скрытия: " .. tostring(toggleKey.Name) Hub.BindBtn.BackgroundColor3 = Color3.fromRGB(39, 39, 42) isBinding = false
-    elseif not gameProcessed and input.KeyCode == toggleKey then
-        if Hub.MainMenuFrame.Size.X.Offset > 0 or menuVisible == false then toggleMenu() end
-    end
-end)
-
-local function openMainMenu()
-    Hub.MainMenuFrame.Visible = true TweenService:Create(Hub.MainMenuFrame, TweenInfo.new(0.6, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = finalMenuSize}):Play() switchTab("Home")
-    local mDragging, mDragInput, mDragStart, mStartPos
-    local function mUpdate(input)
-        local delta = input.Position - mDragStart
-        TweenService:Create(Hub.MainMenuFrame, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Position = UDim2.new(mStartPos.X.Scale, mStartPos.X.Offset + delta.X, mStartPos.Y.Scale, mStartPos.Y.Offset + delta.Y)}):Play()
-    end
-    Hub.MainMenuFrame.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            mDragging = true mDragStart = input.Position mStartPos = Hub.MainMenuFrame.Position
-            local connection connection = input.Changed:Connect(function() if input.UserInputState == Enum.UserInputState.End then mDragging = false connection:Disconnect() end end)
-        end
-    end)
-    Hub.MainMenuFrame.InputChanged:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then mDragInput = input end end)
-    UserInputService.InputChanged:Connect(function(input) if input == mDragInput and mDragging then mUpdate(input) end end)
-end
-
-local isChecking = false
-Hub.CheckBtn.MouseButton1Click:Connect(function()
-    if isChecking then return end local enteredKey = Hub.KeyInput.Text
-    if enteredKey == "" or enteredKey:match("^%s*$") then
-        isChecking = true Hub.CheckBtn.Text = "напиши хоть что-то" Hub.CheckBtn.BackgroundColor3 = Color3.fromRGB(239, 68, 68) task.wait(1.5)
-        Hub.CheckBtn.Text = "Check Key" Hub.CheckBtn.BackgroundColor3 = Color3.fromRGB(54, 32, 94) isChecking = false
-    elseif enteredKey == "Lumin" then
-        isChecking = true Hub.CheckBtn.Text = "спасибо что с нами" Hub.CheckBtn.TextColor3 = Color3.fromRGB(34, 197, 94) Hub.CheckBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 23) task.wait(1.2)
-        local closeTween = TweenService:Create(Hub.MainFrame, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Size = UDim2.new(0, 0, 0, 0), BackgroundTransparency = 1})
-        closeTween:Play() closeTween.Completed:Connect(function()
-            Hub.MainFrame:Destroy() Hub.Watermark.Visible = true Hub.Watermark.BackgroundTransparency = 1
-            TweenService:Create(Hub.Watermark, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundTransparency = 0}):Play()
-            openMainMenu()
-        end)
-    else
-        isChecking = true Hub.CheckBtn.Text = "вы ввели не тот ключ" Hub.CheckBtn.BackgroundColor3 = Color3.fromRGB(239, 68, 68) task.wait(1.5)
-        Hub.CheckBtn.Text = "Check Key" Hub.CheckBtn.BackgroundColor3 = Color3.fromRGB(54, 32, 94) isChecking = false
-    end
-end)
+_G.Header = Instance.new("Frame", _G.MainFrame)
+_G.Header.Size = UDim2.new(1, 0, 0, 50)
+_G.Header.BackgroundColor3 = Color3.fromRGB(22, 22, 26)
+_G.Header.ZIndex = 2
+Instance.new("UICorner", _G.Header).CornerRadius = UDim.new(0, 8)
 
 local dragging, dragInput, dragStart, startPos
-local function update(input)
-    local delta = input.Position - dragStart
-    TweenService:Create(Hub.MainFrame, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)}):Play()
+_G.Header.InputBegan:Connect(function(i)
+    if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
+        dragging = true dragStart = i.Position startPos = _G.MainFrame.Position
+        i.Changed:Connect(function() if i.UserInputState == Enum.UserInputState.End then dragging = false end end)
+    end
+end)
+_G.Header.InputChanged:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseMovement or i.UserInputType == Enum.UserInputType.Touch then dragInput = i end end)
+UserInputService.InputChanged:Connect(function(i) if i == dragInput and dragging then
+    local d = i.Position - dragStart
+    TweenService:Create(_G.MainFrame, TweenInfo.new(0.1), {Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + d.X, startPos.Y.Scale, startPos.Y.Offset + d.Y)}):Play()
+end end)
+print("[FLOW]: Часть 1 успешно инжектирована.")
+-- ==========================================================
+-- FLOW MASTER — ЧАСТЬ 2 ИЗ 8 (HEADER & CONTAINERS)
+-- ==========================================================
+if not _G.MainFrame or not _G.Header then return end
+
+_G.CloseBtn = Instance.new("TextButton", _G.Header)
+_G.CloseBtn.Size = UDim2.new(0, 32, 0, 32)
+_G.CloseBtn.Position = UDim2.new(1, -45, 0, 9)
+_G.CloseBtn.Text = "×"
+_G.CloseBtn.TextColor3 = Color3.fromRGB(160, 160, 165)
+_G.CloseBtn.BackgroundColor3 = Color3.fromRGB(32, 32, 38)
+_G.CloseBtn.Font = Enum.Font.GothamBold
+_G.CloseBtn.TextSize = 20
+_G.CloseBtn.ZIndex = 3
+Instance.new("UICorner", _G.CloseBtn).CornerRadius = UDim.new(0, 5)
+_G.CloseBtn.MouseButton1Click:Connect(function() _G.ScreenGui:Destroy() end)
+
+local HubTitle = Instance.new("TextLabel", _G.Header)
+HubTitle.Size = UDim2.new(0, 200, 0, 20)
+HubTitle.Position = UDim2.new(0, 20, 0, 15)
+HubTitle.Text = "<font color='rgb(140,90,255)'>FLOW Hub</font> • Key System"
+HubTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+HubTitle.Font = Enum.Font.GothamBold
+HubTitle.TextSize = 14
+HubTitle.RichText = true
+HubTitle.TextXAlignment = Enum.TextXAlignment.Left
+HubTitle.BackgroundTransparency = 1
+HubTitle.ZIndex = 3
+
+_G.Menu1 = Instance.new("Frame", _G.MainFrame)
+_G.Menu1.Size = UDim2.new(1, 0, 1, -50)
+_G.Menu1.Position = UDim2.new(0, 0, 0, 50)
+_G.Menu1.BackgroundTransparency = 1
+_G.Menu1.ZIndex = 2
+
+_G.Menu2 = Instance.new("Frame", _G.MainFrame)
+_G.Menu2.Size = UDim2.new(1, 0, 1, -50)
+_G.Menu2.Position = UDim2.new(0, 0, 0, 50)
+_G.Menu2.BackgroundTransparency = 1
+_G.Menu2.Visible = false
+_G.Menu2.ZIndex = 2
+print("[FLOW]: Часть 2 успешно инжектирована.")
+-- ==========================================================
+-- FLOW MASTER — ЧАСТЬ 3 ИЗ 8 (KEY TEXTBOX & PREMIUM)
+-- ==========================================================
+if not _G.Menu1 then return end
+
+_G.KeySection = Instance.new("Frame", _G.Menu1)
+_G.KeySection.Size = UDim2.new(1, -30, 0, 320)
+_G.KeySection.Position = UDim2.new(0, 15, 0, 15)
+_G.KeySection.BackgroundColor3 = Color3.fromRGB(22, 22, 26)
+_G.KeySection.ZIndex = 2
+Instance.new("UICorner", _G.KeySection).CornerRadius = UDim.new(0, 6)
+
+_G.KeyInput = Instance.new("TextBox", _G.KeySection)
+_G.KeyInput.Size = UDim2.new(1, -30, 0, 42)
+_G.KeyInput.Position = UDim2.new(0, 15, 0, 75)
+_G.KeyInput.BackgroundColor3 = Color3.fromRGB(14, 14, 16)
+_G.KeyInput.Text = ""
+_G.KeyInput.PlaceholderText = "Enter your key here..."
+_G.KeyInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+_G.KeyInput.Font = Enum.Font.Gotham
+_G.KeyInput.TextSize = 13
+_G.KeyInput.ZIndex = 3
+Instance.new("UICorner", _G.KeyInput).CornerRadius = UDim.new(0, 5)
+
+local PremiumFrame = Instance.new("Frame", _G.KeySection)
+PremiumFrame.Size = UDim2.new(1, -30, 0, 110)
+PremiumFrame.Position = UDim2.new(0, 15, 0, 200)
+PremiumFrame.BackgroundColor3 = Color3.fromRGB(14, 14, 16)
+PremiumFrame.ZIndex = 3
+Instance.new("UICorner", PremiumFrame).CornerRadius = UDim.new(0, 6)
+local PremStroke = Instance.new("UIStroke", PremiumFrame)
+PremStroke.Color = Color3.fromRGB(45, 30, 80)
+
+local BuyBtn = Instance.new("TextButton", PremiumFrame)
+BuyBtn.Size = UDim2.new(1, -30, 0, 32)
+BuyBtn.Position = UDim2.new(0, 15, 1, -40)
+BuyBtn.BackgroundColor3 = Color3.fromRGB(18, 14, 25)
+BuyBtn.Text = "Buy Permanent Key"
+BuyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+BuyBtn.Font = Enum.Font.GothamBold
+BuyBtn.TextSize = 11
+BuyBtn.ZIndex = 4
+Instance.new("UICorner", BuyBtn).CornerRadius = UDim.new(0, 5)
+Instance.new("UIStroke", BuyBtn).Color = Color3.fromRGB(115, 60, 255)
+BuyBtn.MouseButton1Click:Connect(function() if setclipboard then setclipboard("the_silent52") end end)
+print("[FLOW]: Часть 3 успешно инжектирована.")
+-- ==========================================================
+-- FLOW MASTER — ЧАСТЬ 4 ИЗ 8 (BUTTONS & SIDEBAR)
+-- ==========================================================
+if not _G.KeySection or not _G.Menu2 then return end
+
+_G.RealLoadBtn = Instance.new("TextButton")
+_G.RealLoadBtn.Name = "RealLoadBtn"
+_G.RealLoadBtn.Size = UDim2.new(0, 240, 0, 38)
+_G.RealLoadBtn.Position = UDim2.new(0, 15, 0, 130)
+_G.RealLoadBtn.BackgroundColor3 = Color3.fromRGB(115, 60, 255)
+_G.RealLoadBtn.Text = "Check Key"
+_G.RealLoadBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+_G.RealLoadBtn.Font = Enum.Font.GothamBold
+_G.RealLoadBtn.TextSize = 13
+_G.RealLoadBtn.ZIndex = 4
+_G.RealLoadBtn.Parent = _G.KeySection
+
+local LoadBtnCorner = Instance.new("UICorner")
+LoadBtnCorner.CornerRadius = UDim.new(0, 5)
+LoadBtnCorner.Parent = _G.RealLoadBtn
+
+_G.RealGetKeyBtn = Instance.new("TextButton")
+_G.RealGetKeyBtn.Name = "RealGetKeyBtn"
+_G.RealGetKeyBtn.Size = UDim2.new(0, 240, 0, 38)
+_G.RealGetKeyBtn.Position = UDim2.new(1, -255, 0, 130)
+_G.RealGetKeyBtn.BackgroundColor3 = Color3.fromRGB(14, 14, 16)
+_G.RealGetKeyBtn.Text = "Get Key"
+_G.RealGetKeyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+_G.RealGetKeyBtn.Font = Enum.Font.GothamBold
+_G.RealGetKeyBtn.TextSize = 13
+_G.RealGetKeyBtn.ZIndex = 4
+_G.RealGetKeyBtn.Parent = _G.KeySection
+
+local GetKeyCorner = Instance.new("UICorner")
+GetKeyCorner.CornerRadius = UDim.new(0, 5)
+GetKeyCorner.Parent = _G.RealGetKeyBtn
+
+local GetKeyStroke = Instance.new("UIStroke")
+GetKeyStroke.Color = Color3.fromRGB(45, 45, 50)
+GetKeyStroke.Parent = _G.RealGetKeyBtn
+
+_G.Sidebar = Instance.new("Frame")
+_G.Sidebar.Name = "Sidebar"
+_G.Sidebar.Size = UDim2.new(0, 145, 1, 0)
+_G.Sidebar.BackgroundColor3 = Color3.fromRGB(22, 22, 26)
+_G.Sidebar.BorderSizePixel = 0
+_G.Sidebar.ZIndex = 3
+_G.Sidebar.Parent = _G.Menu2
+
+_G.ContentFrame = Instance.new("Frame")
+_G.ContentFrame.Name = "ContentFrame"
+_G.ContentFrame.Size = UDim2.new(1, -145, 1, 0)
+_G.ContentFrame.Position = UDim2.new(0, 145, 0, 0)
+_G.ContentFrame.BackgroundTransparency = 1 -- Защита от серого бага слоев!
+_G.ContentFrame.ZIndex = 3
+_G.ContentFrame.Parent = _G.Menu2
+
+_G.RealGetKeyBtn.MouseButton1Click:Connect(function() 
+    if setclipboard then 
+        setclipboard("the_silent52") 
+        _G.showNotification("Юзернейм скопирован!")
+    end 
+end)
+
+print("[FLOW]: Часть 4 успешно инжектирована.")
+-- ==========================================================
+-- FLOW MASTER — ЧАСТЬ 5 ИЗ 8 (PAGES & NEON TABS)
+-- ==========================================================
+if not _G.ContentFrame or not _G.Sidebar then return end
+local TweenService = game:GetService("TweenService")
+
+_G.CheatsState = { 
+    AutoEggs = false, 
+    AntiMonsterInv = false, 
+    MonsterFreeze = false, 
+    ServerHopper = false 
+}
+
+_G.EspState = { 
+    Eggs = false, 
+    Distance = false, 
+    Players = false, 
+    Nicknames = false, 
+    Bases = false 
+}
+
+_G.createTabPage = function()
+    local frame = Instance.new("Frame")
+    frame.Size = UDim2.new(1, 0, 1, 0)
+    frame.BackgroundTransparency = 1
+    frame.Visible = false
+    frame.ZIndex = 4
+    frame.Parent = _G.ContentFrame
+    return frame
 end
-Hub.MainFrame.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        dragging = true dragStart = input.Position startPos = Hub.MainFrame.Position
+
+_G.createScrollContainer = function(parent)
+    local sc = Instance.new("ScrollingFrame")
+    sc.Size = UDim2.new(1, 0, 1, -20)
+    sc.Position = UDim2.new(0, 0, 0, 20)
+    sc.BackgroundTransparency = 1
+    sc.BorderSizePixel = 0
+    sc.ScrollBarThickness = 3
+    sc.ScrollBarImageColor3 = Color3.fromRGB(115, 60, 255)
+    sc.CanvasSize = UDim2.new(0, 0, 0, 450)
+    sc.ZIndex = 5
+    sc.Parent = parent
+    return sc
+end
+
+_G.PageFarm = _G.createTabPage() 
+_G.PageEspEggs = _G.createTabPage() 
+_G.PageEspPlayers = _G.createTabPage() 
+_G.PageEspBases = _G.createTabPage() 
+_G.PageAccount = _G.createTabPage() 
+_G.PageSupport = _G.createTabPage()
+
+_G.ScrollFarm = _G.createScrollContainer(_G.PageFarm) 
+_G.ScrollEggs = _G.createScrollContainer(_G.PageEspEggs) 
+_G.ScrollPlayers = _G.createScrollContainer(_G.PageEspPlayers) 
+_G.ScrollBases = _G.createScrollContainer(_G.PageEspBases) 
+_G.ScrollAccount = _G.createScrollContainer(_G.PageAccount) 
+_G.ScrollSupport = _G.createScrollContainer(_G.PageSupport)
+
+_G.PageFarm.Visible = true 
+local activePage = _G.PageFarm
+
+local function switchPage(targetPage) 
+    if activePage == targetPage then return end 
+    activePage.Visible = false 
+    targetPage.Visible = true 
+    activePage = targetPage 
+end
+
+local tabButtons = {}
+
+_G.createTabButton = function(name, yPos, targetPage)
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(1, -20, 0, 26) 
+    btn.Position = UDim2.new(0, 10, 0, yPos) 
+    btn.BackgroundColor3 = Color3.fromRGB(26, 26, 33)
+    btn.Text = name
+    btn.TextColor3 = Color3.fromRGB(150, 120, 220) 
+    btn.Font = Enum.Font.GothamBold 
+    btn.TextSize = 10 
+    btn.ZIndex = 5 
+    btn.Parent = _G.Sidebar
+    
+    local TabCorner = Instance.new("UICorner")
+    TabCorner.CornerRadius = UDim.new(0, 5)
+    TabCorner.Parent = btn
+    
+    table.insert(tabButtons, {Button = btn, Page = targetPage})
+    
+    btn.MouseButton1Click:Connect(function() 
+        switchPage(targetPage)
+        for _, tab in pairs(tabButtons) do 
+            local backColor = (tab.Page == targetPage) and Color3.fromRGB(115, 60, 255) or Color3.fromRGB(26, 26, 33)
+            local txtColor = (tab.Page == targetPage) and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(150, 120, 220)
+            TweenService:Create(tab.Button, TweenInfo.new(0.2), {BackgroundColor3 = backColor, TextColor3 = txtColor}):Play() 
+        end 
+    end)
+end
+
+_G.createTabButton("Авто яйца", 20, _G.PageFarm) 
+_G.createTabButton("Яйца", 60, _G.PageEspEggs) 
+_G.createTabButton("Игроки", 100, _G.PageEspPlayers) 
+_G.createTabButton("Базы", 140, _G.PageEspBases) 
+_G.createTabButton("Аккаунт", 180, _G.PageAccount) 
+_G.createTabButton("Поддержка", 220, _G.PageSupport)
+
+print("[FLOW]: Часть 5 успешно инжектирована.")
+-- ==========================================================
+-- ЧАСТЬ 6: КОНСТРУКТОР ТУМБЛЕРОВ И ВЫСОКИЙ СТАТУС БАР
+-- ==========================================================
+if not _G.Menu1 or not _G.ScrollFarm then return end
+
+local StatusFrame = Instance.new("Frame")
+StatusFrame.Size = UDim2.new(1, -30, 0, 30)
+StatusFrame.Position = UDim2.new(0, 15, 1, -45) -- [ИСПРАВЛЕНО]: Поднимаем над краем экрана
+StatusFrame.BackgroundTransparency = 1
+StatusFrame.ZIndex = 3
+StatusFrame.Parent = _G.Menu1
+
+_G.StatusDot = Instance.new("Frame")
+_G.StatusDot.Size = UDim2.new(0, 6, 0, 6) 
+_G.StatusDot.Position = UDim2.new(0, 5, 0.5, -3) 
+_G.StatusDot.BackgroundColor3 = Color3.fromRGB(115, 60, 255) 
+_G.StatusDot.ZIndex = 4 
+_G.StatusDot.Parent = StatusFrame
+Instance.new("UICorner", _G.StatusDot).CornerRadius = UDim.new(1, 0)
+
+_G.StatusText = Instance.new("TextLabel")
+_G.StatusText.Size = UDim2.new(1, 0, 1, 0) 
+_G.StatusText.Position = UDim2.new(0, 18, 0, 0) 
+_G.StatusText.Text = "Waiting for key..." 
+_G.StatusText.TextColor3 = Color3.fromRGB(110, 110, 115) 
+_G.StatusText.Font = Enum.Font.GothamMedium 
+_G.StatusText.TextSize = 11 
+_G.StatusText.TextXAlignment = Enum.TextXAlignment.Left 
+_G.StatusText.BackgroundTransparency = 1
+_G.StatusText.Parent = StatusFrame
+
+_G.createFunctionalBlock = function(name, description, yPos, parent, callback)
+    local frame = Instance.new("Frame") 
+    frame.Size = UDim2.new(1, -40, 0, 54) 
+    frame.Position = UDim2.new(0, 20, 0, yPos) 
+    frame.BackgroundColor3 = Color3.fromRGB(24, 24, 30) 
+    frame.ZIndex = 5 
+    frame.Parent = parent
+    Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 6)
+    
+    local label = Instance.new("TextLabel") 
+    label.Size = UDim2.new(1, -120, 0, 22) 
+    label.Position = UDim2.new(0, 15, 0, 6) 
+    label.Text = name
+    label.TextColor3 = Color3.fromRGB(235, 235, 240) 
+    label.Font = Enum.Font.GothamBold 
+    label.TextSize = 13 
+    label.TextXAlignment = Enum.TextXAlignment.Left 
+    label.BackgroundTransparency = 1 
+    label.ZIndex = 6
+    label.Parent = frame
+    
+    local desc = Instance.new("TextLabel") 
+    desc.Size = UDim2.new(1, -120, 0, 22) 
+    desc.Position = UDim2.new(0, 15, 0, 26) 
+    desc.Text = description
+    desc.TextColor3 = Color3.fromRGB(130, 130, 135) 
+    desc.Font = Enum.Font.GothamMedium 
+    desc.TextSize = 10 
+    desc.TextXAlignment = Enum.TextXAlignment.Left 
+    desc.BackgroundTransparency = 1 
+    desc.ZIndex = 6
+    desc.Parent = frame
+    
+    local btn = Instance.new("TextButton") 
+    btn.Size = UDim2.new(0, 40, 0, 22) 
+    btn.Position = UDim2.new(1, -55, 0.5, -11) 
+    btn.BackgroundColor3 = Color3.fromRGB(40, 40, 50) 
+    btn.Text = "" 
+    btn.ZIndex = 6 
+    btn.Parent = frame
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(1, 0)
+    
+    local circle = Instance.new("Frame") 
+    circle.Size = UDim2.new(0, 16, 0, 16) 
+    circle.Position = UDim2.new(0, 3, 0.5, -8) 
+    circle.BackgroundColor3 = Color3.fromRGB(255, 255, 255) 
+    circle.ZIndex = 7 
+    circle.Parent = btn
+    Instance.new("UICorner", circle).CornerRadius = UDim.new(1, 0)
+    
+    local enabled = false 
+    btn.MouseButton1Click:Connect(function() 
+        enabled = not enabled 
+        local btnColor = enabled and Color3.fromRGB(115, 60, 255) or Color3.fromRGB(40, 40, 50)
+        local circlePos = enabled and UDim2.new(1, -19, 0.5, -8) or UDim2.new(0, 3, 0.5, -8)
+        game:GetService("TweenService"):Create(btn, TweenInfo.new(0.2), {BackgroundColor3 = btnColor}):Play() 
+        game:GetService("TweenService"):Create(circle, TweenInfo.new(0.2), {Position = circlePos}):Play() 
+        if callback then callback(enabled) end 
+    end)
+end
+
+_G.createFunctionalBlock("Авто яйца", "Автоматический сбор редких яиц (Eternal/Secret) на 1 локе", 10, _G.ScrollFarm, function(s) _G.CheatsState.AutoEggs = s end)
+_G.createFunctionalBlock("Monster Invisible", "Монстры вас полностью игнорируют", 70, _G.ScrollFarm, function(s) _G.CheatsState.AntiMonsterInv = s end)
+_G.createFunctionalBlock("Monster Freeze", "Жесткая блокировка и перенос монстров под карту", 130, _G.ScrollFarm, function(s) _G.CheatsState.MonsterFreeze = s end)
+
+print("[FLOW]: Часть 6 успешно инжектирована.")
+-- ==========================================================
+-- ЧАСТЬ 7: ТУМБЛЕРЫ НАСТРОЕК И ОПТИМИЗИРОВАННЫЙ ЕСП ДВИЖОК
+-- ==========================================================
+if not _G.ScrollEggs or not _G.ScrollPlayers then return end
+local CoreGui = game:GetService("CoreGui") 
+local Players = game.Players 
+local LocalPlayer = Players.LocalPlayer
+
+_G.createFunctionalBlock("ESP Eggs", "Фиолетовая обводка редких яиц сквозь стены", 10, _G.ScrollEggs, function(s) _G.EspState.Eggs = s end)
+_G.createFunctionalBlock("Show Distance", "Отображает точное расстояние в метрах до яиц", 70, _G.ScrollEggs, function(s) _G.EspState.Distance = s end)
+_G.createFunctionalBlock("Player ESP", "Включает неоновую обводку игроков сквозь стены", 10, _G.ScrollPlayers, function(s) _G.EspState.Players = s end)
+_G.createFunctionalBlock("Show Nicknames", "Выводит реальный никнейм и ХП над головой", 70, _G.ScrollPlayers, function(s) _G.EspState.Nicknames = s end)
+_G.createFunctionalBlock("Base ESP", "Включает оранжевую подсветку зон разгрузки", 10, _G.ScrollBases, function(s) _G.EspState.Bases = s end)
+_G.createFunctionalBlock("Server Hopper", "Авто-поиск и прыжок на пустой сервер к 1 человеку", 10, _G.ScrollSupport, function(s) _G.CheatsState.ServerHopper = s end)
+
+local EspFolder = CoreGui:FindFirstChild("FlowEspFolder") or Instance.new("Folder", CoreGui) 
+EspFolder.Name = "FlowEspFolder"
+
+game:GetService("RunService").Heartbeat:Connect(function() 
+    EspFolder:ClearAllChildren()
+    if _G.EspState.Eggs then
+        for _, o in pairs(workspace:GetDescendants()) do 
+            if o:IsA("Model") and (string.find(string.lower(o.Name), "egg") or o:FindFirstChild("Egg")) then
+                if string.find(string.lower(o.Name), "eternal") or string.find(string.lower(o.Name), "secret") or string.find(string.lower(o.Name), "divine") then
+                    local hl = Instance.new("Highlight", EspFolder) 
+                    hl.Adornee = o 
+                    hl.FillColor = Color3.fromRGB(140, 90, 255) 
+                    hl.FillTransparency = 0.4
+                    
+                    if _G.EspState.Distance and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                        local p = o:FindFirstChildOfClass("Part") or o:FindFirstChildOfClass("MeshPart")
+                        if p then 
+                            local dist = math.floor((p.Position - LocalPlayer.Character.HumanoidRootPart.Position).Magnitude)
+                            local bg = Instance.new("BillboardGui", EspFolder) 
+                            bg.Adornee = p 
+                            bg.Size = UDim2.new(0,100,0,30) 
+                            bg.AlwaysOnTop = true
+                            
+                            local lbl = Instance.new("TextLabel", bg) 
+                            lbl.Size = UDim2.new(1,0,1,0) 
+                            lbl.Text = dist.."м" 
+                            lbl.TextColor3 = Color3.fromRGB(255,255,255) 
+                            lbl.Font = Enum.Font.GothamBold 
+                            lbl.TextSize = 11 
+                            lbl.BackgroundTransparency = 1
+                        end 
+                    end
+                end 
+            end 
+        end
+    end
+    if _G.EspState.Players then
+        for _, p in pairs(game.Players:GetPlayers()) do 
+            if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                local hl = Instance.new("Highlight", EspFolder) 
+                hl.Adornee = p.Character 
+                hl.FillColor = Color3.fromRGB(0, 255, 120) 
+                hl.FillTransparency = 0.5
+                
+                if _G.EspState.Nicknames and p.Character:FindFirstChild("Head") then
+                    local bg = Instance.new("BillboardGui", EspFolder) 
+                    bg.Adornee = p.Character.Head 
+                    bg.Size = UDim2.new(0,120,0,35) 
+                    bg.StudsOffset = Vector3.new(0,2.5,0) 
+                    bg.AlwaysOnTop = true
+                    
+                    local lbl = Instance.new("TextLabel", bg) 
+                    lbl.Size = UDim2.new(1,0,1,0) 
+                    lbl.Text = p.Name .. " [" .. math.floor(p.Character:FindFirstChildOfClass("Humanoid").Health) .. "HP]" 
+                    lbl.TextColor3 = Color3.fromRGB(255,255,255) 
+                    lbl.Font = Enum.Font.GothamBold 
+                    lbl.TextSize = 10 
+                    lbl.BackgroundTransparency = 1
+                end 
+            end 
+        end
+    end
+    if _G.EspState.Bases then 
+        local b = workspace:FindFirstChild("Bases") or workspace:FindFirstChild("Teams") 
+        if b then 
+            local hl = Instance.new("Highlight", EspFolder) 
+            hl.Adornee = b 
+            hl.FillColor = Color3.fromRGB(255, 185, 0) 
+            hl.FillTransparency = 0.6 
+        end 
+    end
+end)
+
+print("[FLOW]: Часть 7 успешно инжектирована.")
+-- ==========================================================
+-- ЧАСТЬ 8: ЛОГИКА ФАРМА, RO-PROXY SERVER HOPPER И КЛИК
+-- ==========================================================
+if not _G.MainFrame or not _G.RealLoadBtn or not _G.KeyInput then return end
+local TweenService = game:GetService("TweenService") 
+local RunService = game:GetService("RunService") 
+local HttpService = game:GetService("HttpService") 
+local TeleportService = game:GetService("TeleportService") 
+local LocalPlayer = game.Players.LocalPlayer
+
+local EggDatabase = { 
+    ["eternal"] = 6, 
+    ["secret"] = 5, 
+    ["divine"] = 5, 
+    ["void"] = 4, 
+    ["shadow"] = 4 
+}
+
+local function getBestEggFromDatabase()
+    local r = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") 
+    if not r then return nil end
+    local best = nil
+    local highP = -1
+    local shortD = math.huge
+    for _, o in pairs(workspace:GetDescendants()) do 
+        if o:IsA("Model") and (string.find(string.lower(o.Name), "egg") or o:FindFirstChild("Egg")) then
+            local p = o:FindFirstChildOfClass("Part") or o:FindFirstChildOfClass("MeshPart") 
+            if p and p:IsA("BasePart") then
+                local cP = 1
+                for k, v in pairs(EggDatabase) do 
+                    if string.find(string.lower(o.Name), k) then 
+                        cP = v 
+                        break 
+                    end 
+                end
+                if cP > highP then 
+                    highP = cP
+                    shortD = (p.Position - r.Position).Magnitude
+                    best = p
+                elseif cP == highP then 
+                    local d = (p.Position - r.Position).Magnitude 
+                    if d < shortD then 
+                        shortD = d
+                        best = p 
+                    end 
+                end
+            end 
+        end 
+    end 
+    return best
+end
+
+task.spawn(function()
+    while task.wait(0.1) do 
+        if _G.CheatsState.AutoEggs and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            local r = LocalPlayer.Character.HumanoidRootPart 
+            local h = LocalPlayer.Character:FindFirstChild("Humanoid")
+            if h then 
+                h.WalkSpeed = 150 
+                local t = getBestEggFromDatabase() 
+                if t then 
+                    r.CanCollide = false
+                    h:MoveTo(t.Position)
+                    if (t.Position - r.Position).Magnitude < 10 then 
+                        if firetouchinterest then 
+                            firetouchinterest(r, t, 0) 
+                            task.wait(0.02) 
+                            firetouchinterest(r, t, 1) 
+                        end
+                        local sz = workspace:FindFirstChild("SaveZone") or workspace:FindFirstChild("SafeZone") 
+                        local sp = sz and sz:FindFirstChildOfClass("BasePart") 
+                        if sp then 
+                            h:MoveTo(sp.Position) 
+                            task.wait(0.1) 
+                        end
+                        local b = workspace:FindFirstChild("Bases") or workspace:FindFirstChild("Teams") 
+                        local mb = b and (b:FindFirstChild(LocalPlayer.TeamColor.Name) or b:FindFirstChild(LocalPlayer.Name)) 
+                        local dp = mb and mb:FindFirstChildOfClass("BasePart")
+                        if dp and firetouchinterest then 
+                            firetouchinterest(r, dp, 0) 
+                            task.wait(0.02) 
+                            firetouchinterest(r, dp, 1) 
+                        end
+                    end 
+                end 
+            end
+        else 
+            if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then 
+                LocalPlayer.Character.Humanoid.WalkSpeed = 16 
+            end 
+        end 
+    end
+end)
+
+task.spawn(function()
+    while task.wait(0.5) do 
+        if _G.CheatsState.ServerHopper then
+            local proxy = "https://roproxy.com" .. game.PlaceId .. "/servers/Public?sortOrder=Asc&limit=100"
+            local s, res = pcall(function() return game:HttpGet(proxy) end) 
+            if s and res then
+                local d = HttpService:JSONDecode(res) 
+                if d and d.data then 
+                    for _, sv in pairs(d.data) do 
+                        if sv.playing and sv.playing == 1 and sv.id ~= game.JobId then 
+                            TeleportService:TeleportToPlaceInstance(game.PlaceId, sv.id, LocalPlayer) 
+                            break 
+                        end 
+                    end 
+                end
+            end 
+            _G.CheatsState.ServerHopper = false
+        end 
+    end
+end)
+
+RunService.Stepped:Connect(function()
+    if _G.CheatsState.AntiMonsterInv then 
+        for _, m in pairs(workspace:GetDescendants()) do 
+            if m:IsA("Model") and (string.find(string.lower(m.Name), "monster") or string.find(string.lower(m.Name), "bot")) then 
+                for _, pt in pairs(m:GetChildren()) do 
+                    if pt:IsA("BasePart") then pt.CanTouch = false end 
+                end 
+                local tg = m:FindFirstChild("Target") or m:FindFirstChild("Player") 
+                if tg then tg.Value = nil end 
+            end 
+        end 
+    end
+    if _G.CheatsState.MonsterFreeze then 
+        for _, m in pairs(workspace:GetDescendants()) do 
+            if m:IsA("Model") and (string.find(string.lower(m.Name), "monster") or string.find(string.lower(m.Name), "bot")) then 
+                local rt = m:FindFirstChild("HumanoidRootPart") or m:FindFirstChildOfClass("Part") 
+                if rt and rt:IsA("BasePart") then 
+                    rt.Anchored = true 
+                    rt.CFrame = CFrame.new(rt.Position.X, -120, rt.Position.Z) 
+                end 
+            end 
+        end 
+    end
+end)
+
+_G.RealLoadBtn.MouseButton1Click:Connect(function()
+    if _G.KeyInput.Text == "Flow" then 
+        _G.RealLoadBtn.Text = "SUCCESS" 
+        _G.RealLoadBtn.BackgroundColor3 = Color3.fromRGB(46, 204, 113) 
+        _G.StatusText.Text = "Key authorized!" 
+        _G.StatusDot.BackgroundColor3 = Color3.fromRGB(46, 204, 113) 
+        _G.showNotification("Запуск FLOW Hub...") 
+        task.wait(0.5)
+        _G.MainFrame.ClipsDescendants = true 
+        local hide = TweenService:Create(_G.MainFrame, TweenInfo.new(0.4, Enum.EasingStyle.Quad), {Size = UDim2.new(0, 550, 0, 50)}) 
+        hide:Play()
+        hide.Completed:Connect(function() 
+            _G.Menu1.Visible = false 
+            _G.Menu2.Visible = true 
+            _G.Menu2.Size = UDim2.new(1, 0, 1, 0) 
+            TweenService:Create(_G.MainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back), {Size = _G.originalSize}):Play() 
+        end)
+    else 
+        _G.RealLoadBtn.Text = "WRONG KEY" 
+        _G.RealLoadBtn.BackgroundColor3 = Color3.fromRGB(231, 76, 60) 
+        _G.StatusText.Text = "Invalid key." 
+        task.wait(1.5) 
+        _G.RealLoadBtn.Text = "Check Key" 
+        _G.RealLoadBtn.BackgroundColor3 = Color3.fromRGB(115, 60, 255) 
+        _G.StatusText.Text = "Waiting for key..." 
+    end
+end)
+
+_G.MainFrame.Size = UDim2.new(0, 550, 0, 0) 
+_G.MainFrame.ClipsDescendants = true 
+TweenService:Create(_G.MainFrame, TweenInfo.new(0.4, Enum.EasingStyle.Back), {Size = _G.originalSize}):Play()
+
+print("[FLOW Master]: Скрипт полностью скомпилирован во все части!");
